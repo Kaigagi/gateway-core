@@ -2,6 +2,10 @@ const express = require('express')
 const cors = require("cors")
 const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
 const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
+const winston = require('winston');
+
+const expressWinston = require('express-winston');
+// Route import
 const helloRoute = require("./api/test.js")
 
 const app = express()
@@ -17,8 +21,25 @@ initializeApp({
   credential: cert(serviceAccount)
 });
 
+// Logger setup
+
+app.use(expressWinston.logger({
+    transports: [
+      new winston.transports.Console()
+    ],
+    format: winston.format.combine(
+      winston.format.json()
+    ),
+    meta: false,
+    msg: "HTTP  ",
+    expressFormat: true,
+    colorize: false,
+    ignoreRoute: function (req, res) { return false; }
+  }));
+  
+
 const db = getFirestore();
-// Route import
+
 
 // Middle Ware
 
