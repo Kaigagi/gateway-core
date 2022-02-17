@@ -1,9 +1,27 @@
 # Introduction
+Gateway backend
+## How to use
+- First
 
+    ```git clone https://github.com/GDSC-HSU/gateway-core.git```
+
+- Second run this command 
+
+    ``` npm install ```
+- Third is to 
+
+    ``` nodemon app.js ```
 ## Naming Conventions
 ### Use noun for Resourses
-
+Example:
+```js
+let userInfo
+```
 ### Use verb for Function name
+
+```js
+function getUserInfo()
+```
 ### Use lowerCamelCase for variables, properties and function names
 
 Variables, properties and function names should use `lowerCamelCase`.  They
