@@ -130,4 +130,4 @@ dist
 .pnp.*
 
 # Google Service Key
-./gdsc-gateway-service-account
+gdsc-gateway-firebase.json

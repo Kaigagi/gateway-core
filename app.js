@@ -6,7 +6,7 @@ const app = express()
 const PORT = 3000
 
 // Firebstore account setup
-const serviceAccount = require('./gdsc-gateway-service-account.json');
+const serviceAccount = require('./gdsc-gateway-firebase.json');
 
 initializeApp({
   credential: cert(serviceAccount)
@@ -27,5 +27,5 @@ app.use(cors())
 
 // Server config
 app.listen(PORT, () => {
-    console.log(`Example app listening on port ${port}`)
+    console.log(`Example app listening on port ${PORT}`)
 })
