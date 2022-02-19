@@ -53,5 +53,5 @@ app.use(`/api/${VERSION}`,helloRoute)
 
 // Server config
 app.listen(PORT, () => {
-    console.log(`Example app listening on port ${PORT}`)
+    console.log(`Server Gateway listening on port ${PORT}`)
 })
