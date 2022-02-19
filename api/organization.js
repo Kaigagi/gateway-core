@@ -2,8 +2,12 @@
 const express = require("express")
 const router = express.Router()
 
-router.get("/hello",(req,res) => {
-    res.send("<h1>Quan Dam AAA</h1>")
+router.post("/organization",(req,res) => {
+
+})
+
+router.put("/organization",(req,res) => {
+
 })
 
 module.exports = router
