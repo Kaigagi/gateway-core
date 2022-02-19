@@ -7,6 +7,9 @@ const winston = require('winston');
 const expressWinston = require('express-winston');
 // Route import
 const helloRoute = require("./api/test.js")
+const organizationRoute = require("./api/organization.js")
+const deviceRoute = require("./api/device.js")
+const dataRoute = require("./api/data.js")
 
 const app = express()
 
@@ -15,11 +18,11 @@ const VERSION = "v1"
 
 
 // Firebstore account setup
-const serviceAccount = require('./gdsc-gateway-firebase.json');
+// const serviceAccount = require('./gdsc-gateway-firebase.json');
 
-initializeApp({
-  credential: cert(serviceAccount)
-});
+// initializeApp({
+//   credential: cert(serviceAccount)
+// });
 
 // Logger setup
 
@@ -38,7 +41,7 @@ app.use(expressWinston.logger({
   }));
   
 
-const db = getFirestore();
+// const db = getFirestore();
 
 
 // Middle Ware
@@ -50,6 +53,9 @@ app.use(cors())
 // Api route
 
 app.use(`/api/${VERSION}`,helloRoute)
+app.use(`/api/${VERSION}`,organizationRoute)
+app.use(`/api/${VERSION}`,deviceRoute)
+app.use(`/api/${VERSION}`,dataRoute)
 
 // Server config
 app.listen(PORT, () => {
