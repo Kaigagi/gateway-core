@@ -1,28 +1,26 @@
 const express = require('express')
 const cors = require("cors")
-const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
-const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
+
+const admin = require('firebase-admin')
 const winston = require('winston');
-
 const expressWinston = require('express-winston');
-// Route import
-const helloRoute = require("./api/test.js")
-const organizationRoute = require("./api/organization.js")
-const deviceRoute = require("./api/device.js")
-const dataRoute = require("./api/data.js")
-
 const app = express()
 
 const PORT = 3000
 const VERSION = "v1"
 
-
 // Firebstore account setup
-// const serviceAccount = require('./gdsc-gateway-firebase.json');
+const serviceAccount = require('./gdsc-gateway-firebase.json');
 
-// initializeApp({
-//   credential: cert(serviceAccount)
-// });
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+})
+
+// Route import
+const helloRoute = require("./api/test.js")
+const organizationRoute = require("./api/organization.js")
+const deviceRoute = require("./api/device.js")
+const dataRoute = require("./api/data.js")
 
 // Logger setup
 
@@ -41,7 +39,7 @@ app.use(expressWinston.logger({
   }));
   
 
-// const db = getFirestore();
+// const db = getFirestore()
 
 
 // Middle Ware
