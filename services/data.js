@@ -1,6 +1,7 @@
 const { getFirestore } = require("firebase-admin/firestore");
 const db = getFirestore()
-
+// Maybe move somewhere else
+const SUPPORTED_COVIDIDENTIFICATION = ["QR","RFID"]
 
 async function postDeviceSensorData(did, body_temperature,face_mask, covid_identification,is_complete){
         // Checking all the parameters that are required and check its datatype
@@ -21,8 +22,7 @@ async function postDeviceSensorData(did, body_temperature,face_mask, covid_ident
 
         // Check the support identification methods, maybe this array will be move into another module
         // and be store as supported identification methods
-        if (covid_identification.identification_method in ["QR","RFID"] == false){
-            console.log(covid_identification.identification_method in ["QR","RFID"])
+        if (SUPPORTED_COVIDIDENTIFICATION.includes(covid_identification.identification_method) == false){
             throw new Error("wrong value", {cause: "identification_method isn't QR or RFID"})
         }
 
