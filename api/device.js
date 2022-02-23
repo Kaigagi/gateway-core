@@ -1,17 +1,24 @@
-
 const express = require("express")
+const Device = require("../models/device")
+const { getAllDeviceInformation, postDeviceSensorData } = require("../services/device")
 const router = express.Router()
 
-router.get("/device",(req,res) => {
 
+// Get all device information, with pagination
+router.get("/device",async (req,res) => {
+    const deviceInfo = getAllDevicesInformation()
+    
+    
 })
 
-router.post("/device/:did",(req,res) => {
-
+// Post device sensor data on to firestore
+router.post("/device/:did",async (req,res) => {
+    
 })
+
 
 router.post("/device",(req,res) => {
-
+   
 })
 
 router.put("/device",(req,res) => {
