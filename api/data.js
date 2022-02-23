@@ -31,6 +31,7 @@ router.post("/data",async (req,res) => {
         if(err.message === "wrong datatype" || err.message === "wrong value"){
             res.sendStatus(404)
         }else{
+            console.log(err)
             res.sendStatus(500)
         }
     }
