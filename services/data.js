@@ -3,25 +3,32 @@ const db = getFirestore()
 
 
 async function postDeviceSensorData(did, body_temperature,face_mask, covid_identification,is_complete){
-    try{
         // Checking all the parameters that are required and check its datatype
-        if (typeof body_temperature !== Float32Array || body_temperature === undefined){
-            // throw new Error()
+        if (Number.isInteger(body_temperature) === true|| body_temperature === undefined){
+            throw new Error("wrong datatype",{cause:"body_temperature isn't float or exist"})
         }
-        if(typeof face_mask !== Boolean){
-            // throw new Error()
+        if(typeof face_mask !== "boolean"){
+            throw new Error("wrong datatype",{cause: "face_mask isn't boolean or exist"})
         }
 
-        if(typeof is_complete !== Boolean){
-
+        if(typeof is_complete !== "boolean"){
+            throw new Error("wrong datatype", {cause: "is_complete isn't boolean or exist"})
         }
 
         if(covid_identification === {} || covid_identification === null || covid_identification === undefined){
-            // throw new Error()
+            throw new Error("wrong datatype",{cause: "covid_identification is json or exist"})
         }
-        
-        // Map data to json 
+
+        // Check the support identification methods, maybe this array will be move into another module
+        // and be store as supported identification methods
+        if (covid_identification.identification_method in ["QR","RFID"] == false){
+            console.log(covid_identification.identification_method in ["QR","RFID"])
+            throw new Error("wrong value", {cause: "identification_method isn't QR or RFID"})
+        }
+
+        // Server timestamp (must be careful of the server location)
         const timestamp = Date.now()
+        // Map data
         const deviceSensorData = {
             did: did,
             body_temperature : body_temperature,
@@ -34,13 +41,8 @@ async function postDeviceSensorData(did, body_temperature,face_mask, covid_ident
             timestamp: timestamp
         }
         
-        // Write to database
+        // Write to database (Cloud Firestore)
         const res = await db.collection('data').add(deviceSensorData)
-
-    } catch (err){
-        console.log(err)
-    }
-    
 }
 
 module.exports = {
