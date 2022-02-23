@@ -1,5 +1,5 @@
 module.exports = class Device {
-    constructor(){
+    constructor(id,accessKey,oid,name,location,hảdwareInfo,tags){
         
     }
 }
