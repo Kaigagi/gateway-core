@@ -1,5 +1,5 @@
 module.exports.databaseConstants = {
-    device = "devices",
-    organization = "organizations",
-    data = "data"
+    device: "devices",
+    organization: "organizations",
+    data: "data"
 }

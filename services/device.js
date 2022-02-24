@@ -1,7 +1,7 @@
 const { getFirestore } = require("firebase-admin/firestore");
 const db = getFirestore()
 const { nanoid } = require('nanoid');
-const { databaseConstants } = require("../config/constants/database_constants");
+const { databaseConstants } = require("../config/constants/database_constants.js");
 
 async function getAllDevices(){
     try {

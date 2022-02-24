@@ -20,7 +20,8 @@ admin.initializeApp({
 const helloRoute = require("./api/test.js")
 const organizationRoute = require("./api/organization.js")
 const deviceRoute = require("./api/device.js")
-const dataRoute = require("./api/data.js")
+const dataRoute = require("./api/data.js");
+const server = require('./broker/broker');
 
 // Logger setup
 
@@ -54,6 +55,11 @@ app.use(`/api/${VERSION}`,helloRoute)
 app.use(`/api/${VERSION}`,organizationRoute)
 app.use(`/api/${VERSION}`,deviceRoute)
 app.use(`/api/${VERSION}`,dataRoute)
+
+
+//Broker
+
+//server();
 
 // Server config
 app.listen(PORT, () => {
