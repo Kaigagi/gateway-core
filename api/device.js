@@ -42,7 +42,15 @@ router.post("/device/did-new",async (req,res) => {
         }
 
         // business logic
-        const deviceData = new Device("123",undefined,"HSU",deviceName,deviceLocation,{},req.body.tags);
+        const deviceData = new Device(
+            "123", /*mock id*/
+            undefined,/*accessKey */
+            "HSU", /*oid */
+            deviceName,/*device name */
+            deviceLocation,/*device location */
+            {},/*hardware info */
+            []/*tags */
+        );
 
         let result = await createNewDeviceFromWeb(deviceData); // return the result
         res.status = 200;
@@ -72,13 +80,20 @@ router.post("/device",async (req,res) => {
        }
 
        //business logic
-       const result = await createDeviceInfo(id,accessKey,req.body.hardwareInfo);
+       const result = await createDeviceInfo(
+           id, /*id */
+           accessKey, /*accessKey */
+           req.body.hardwareInfo /*hardware Info */
+        );
        res.send(result);
 
    } catch (error) {
        console.log(error);
-       if (error.message === "invalid id" || error.message === "wrong accessKey" ) {
+       if (error.message === "wrong accessKey" ) {
            res.sendStatus(403);
+       }
+       if(error.message === "already has hardwareInfo" || error.message === "invalid id"){
+           res.sendStatus(404);
        }
    }
 })

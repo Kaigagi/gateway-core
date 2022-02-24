@@ -51,11 +51,14 @@ async function createDeviceInfo(id,accessKey,hardwareInfo) {
         throw new Error("wrong accessKey",{cause:"accessKey does not match"})
     }
 
-    if (deviceData.hardwareInfo !== hardwareInfo) {
+    console.log(typeof deviceData.hardwareInfo);
+    if (Object.keys(deviceData.hardwareInfo).length === 0) {
         deviceData.hardwareInfo = hardwareInfo;
-        db.collection("devices").doc().update({hardwareInfo: hardwareInfo});
+        db.collection("devices").doc(id).update({hardwareInfo: hardwareInfo});
+    }else{
+        throw new Error("already has hardwareInfo")
     }
-    
+
     return deviceData;
 }
 
