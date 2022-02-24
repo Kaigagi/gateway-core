@@ -4,6 +4,8 @@ const db = getFirestore()
 
 
 
-async function updateDeviceStatus(device_status){
-    db.collection(databaseConstants.device_status).doc(device_status.id).set(device_status)
+async function updateDeviceStatus(device_status) {
+    db.collection(databaseConstants.device_status).doc(device_status.id).set(device_status.toJson());
 }
+
+module.exports = { updateDeviceStatus };

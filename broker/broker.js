@@ -1,4 +1,6 @@
 const aedes = require('aedes');
+const DeviceStatus = require('../models/device_status');
+const { updateDeviceStatus } = require('../services/device_status');
 const broker = aedes();
 const server = require('net').createServer(broker.handle)
 
@@ -19,12 +21,16 @@ broker.authenticate = function (client, username, password, callback) {
 
 broker.on('clientReady', async function (client) {
     console.log("--------clientReady");
-    console.log(client.id);
+    let timestamp = Date.now()
+    let device_status = new DeviceStatus(client.id, 1, timestamp);
+    updateDeviceStatus(device_status);
 });
 
 broker.on("clientDisconnect", async function (client) {
     console.log("-------clientDisconnect");
-    console.log(client);
+    let timestamp = Date.now()
+    let device_status = new DeviceStatus(client.id, 0, timestamp);
+    updateDeviceStatus(device_status);
 })
 
 
