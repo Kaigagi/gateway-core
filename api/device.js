@@ -1,6 +1,7 @@
 const express = require("express")
 const {getAllDevices, createNewDeviceFromWeb, createDeviceInfo} = require("../services/device")
 const Device = require("../models/device")
+const { headerConstants } = require("../config/constants/header_constants.js");
 const router = express.Router()
 
 const API_KEY = "123";
@@ -8,7 +9,7 @@ const API_KEY = "123";
 router.get("/device", async (req,res) => {
     try {
         // check header
-        const apiKey = req.get("apiKey");
+        const apiKey = req.get(headerConstants.apiKeyHeader);
         if(apiKey !== API_KEY){
             return res.sendStatus(403);
         }
@@ -36,7 +37,7 @@ router.post("/device/did-new",async (req,res) => {
         }
 
         // check Header
-        const apiKey = req.get("apiKey"); 
+        const apiKey = req.get(headerConstants.apiKeyHeader); 
         if (apiKey !== API_KEY) {
             return res.sendStatus(403);
         }
@@ -72,8 +73,8 @@ router.post("/device",async (req,res) => {
        }
 
        //header check
-       const apiKey = req.get("apiKey");
-       const accessKey = req.get("accessKey");
+       const apiKey = req.get(headerConstants.apiKeyHeader);
+       const accessKey = req.get(headerConstants.deviceKeyHeader);
        //check apiKey
        if (apiKey !== API_KEY) {
             return res.sendStatus(403);
