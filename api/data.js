@@ -22,10 +22,10 @@ router.post("/data",async (req,res) => {
         // Pass logic to the data service, using function postDeviceSensorData
         let result = await postDeviceSensorData(
             req.body.did,
-            req.body.body_temperature,
-            req.body.face_mask,
-            req.body.covid_identification,
-            req.body.is_complete
+            req.body.bodyTemperature,
+            req.body.faceMask,
+            req.body.covidIdentification,
+            req.body.isComplete
         )
         res.sendStatus(200)
     }catch(err) {
