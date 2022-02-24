@@ -29,17 +29,15 @@ app.use(expressWinston.logger({
       new winston.transports.Console()
     ],
     format: winston.format.combine(
-      winston.format.json()
+      winston.format.timestamp(),
+      winston.format.json(),
     ),
-    meta: false,
+    meta: true,
     msg: "HTTP  ",
     expressFormat: true,
     colorize: false,
     ignoreRoute: function (req, res) { return false; }
   }));
-  
-
-// const db = getFirestore()
 
 
 // Middle Ware
