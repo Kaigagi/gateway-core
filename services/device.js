@@ -1,6 +1,7 @@
 const { getFirestore } = require("firebase-admin/firestore");
 const db = getFirestore()
-const { nanoid } = require('nanoid')
+const { nanoid } = require('nanoid');
+const { databaseConstants } = require("../config/constants/database_constants");
 
 async function getAllDevices(){
     try {
@@ -54,7 +55,7 @@ async function createDeviceInfo(id,accessKey,hardwareInfo) {
     console.log(typeof deviceData.hardwareInfo);
     if (Object.keys(deviceData.hardwareInfo).length === 0) {
         deviceData.hardwareInfo = hardwareInfo;
-        db.collection("devices").doc(id).update({hardwareInfo: hardwareInfo});
+        db.collection(databaseConstants.device).doc(id).update({hardwareInfo: hardwareInfo});
     }else{
         throw new Error("already has hardwareInfo")
     }
