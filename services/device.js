@@ -2,11 +2,13 @@ const { getFirestore } = require("firebase-admin/firestore");
 const db = getFirestore()
 const { nanoid } = require('nanoid');
 const { databaseConstants } = require("../config/constants/database_constants.js");
+const { headerConstants } = require("../config/constants/header_constants.js");
+const { messageConstants } = require("../config/constants/message_constants.js");
 
 async function getAllDevices(){
     try {
         // get device data and push into an array
-        const snapshot = await db.collection("devices").get();
+        const snapshot = await db.collection(databaseConstants.device).get();
         let devicesArray = [];
         snapshot.forEach((device) =>{
             let deviceData = device.data();
@@ -24,11 +26,11 @@ async function createNewDeviceFromWeb(deviceData){
         deviceData.accessKey = nanoid();
 
         // store docref
-        let res = await db.collection("devices").add(JSON.parse(JSON.stringify(deviceData)));
+        let res = await db.collection(databaseConstants.device).add(JSON.parse(JSON.stringify(deviceData)));
         // set device id
         deviceData.id = res.id;
         // update it to database
-        db.collection("devices").doc(res.id).update({id:res.id});
+        db.collection(databaseConstants.device).doc(res.id).update({id:res.id});
         return {
             id: res.id,
             accessKey: deviceData.accessKey,
@@ -41,7 +43,7 @@ async function createNewDeviceFromWeb(deviceData){
 }
 
 async function createDeviceInfo(id,accessKey,hardwareInfo) {
-    const deviceData =  (await db.collection("devices").doc(id).get()).data(); // try to get device data
+    const deviceData =  (await db.collection((databaseConstants.device)).doc(id).get()).data(); // try to get device data
     // check id
     if (deviceData === undefined) {
         throw new Error("invalid id",{cause:"invalid id or device does not exists"});
@@ -55,7 +57,7 @@ async function createDeviceInfo(id,accessKey,hardwareInfo) {
     console.log(typeof deviceData.hardwareInfo);
     if (Object.keys(deviceData.hardwareInfo).length === 0) {
         deviceData.hardwareInfo = hardwareInfo;
-        db.collection(databaseConstants.device).doc(id).update({hardwareInfo: hardwareInfo});
+        await db.collection(databaseConstants.device).doc(id).update({hardwareInfo: hardwareInfo});
     }else{
         throw new Error("already has hardwareInfo")
     }
