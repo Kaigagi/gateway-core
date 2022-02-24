@@ -17,18 +17,17 @@ async function getAllDevices(){
     }
 }
 
-async function createNewDevice(deviceData){
+async function createNewDeviceFromWeb(deviceData){
     try {
-        //check data type
-        if(deviceData.hardwareInfo !== {}){
-            // throw error
-        }
-
         // set device accessKey
         deviceData.accessKey = nanoid();
 
         // store docref
-        let res = await db.collection("devices").add(deviceData);
+        let res = await db.collection("devices").add(JSON.parse(JSON.stringify(deviceData)));
+        // set device id
+        deviceData.id = res.id;
+        // update it to database
+        db.collection("devices").doc(res.id).update({id:res.id});
         return {
             id: res.id,
             accessKey: deviceData.accessKey,
@@ -40,5 +39,26 @@ async function createNewDevice(deviceData){
     }
 }
 
-module.exports = {getAllDevices, createNewDevice};
+async function createDeviceInfo(id,accessKey,hardwareInfo) {
+    const deviceData =  (await db.collection("devices").doc(id).get()).data(); // try to get device data
+    // check id
+    if (deviceData === undefined) {
+        throw new Error("invalid id",{cause:"invalid id or device does not exists"});
+    }
+
+    // check accessKey
+    if(deviceData.accessKey !== accessKey){
+        throw new Error("wrong accessKey",{cause:"accessKey does not match"})
+    }
+
+    if (deviceData.hardwareInfo !== hardwareInfo) {
+        deviceData.hardwareInfo = hardwareInfo;
+        db.collection("devices").doc().update({hardwareInfo: hardwareInfo});
+    }
+    
+    return deviceData;
+}
+
+
+module.exports = {getAllDevices, createNewDeviceFromWeb,createDeviceInfo};
 
