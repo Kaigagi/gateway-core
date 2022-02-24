@@ -1,13 +1,14 @@
-const express = require('express')
-const cors = require("cors")
+const express = require('express');
+const cors = require("cors");
 
-const admin = require('firebase-admin')
+const admin = require('firebase-admin');
 const winston = require('winston');
 const expressWinston = require('express-winston');
-const app = express()
+const app = express();
 
-const PORT = 3000
-const VERSION = "v1"
+const APP_PORT = 3000;
+const BROKER_PORT = 1883;
+const VERSION = "v1";
 
 // Firebstore account setup
 const serviceAccount = require('./gdsc-gateway-firebase.json');
@@ -56,10 +57,11 @@ app.use(`/api/${VERSION}`,dataRoute)
 
 
 //Broker
-
-//server();
+server.listen(BROKER_PORT, function () {
+  console.log('Broker started and listening on port', BROKER_PORT);
+})
 
 // Server config
-app.listen(PORT, () => {
-    console.log(`Server Gateway listening on port ${PORT}`)
+app.listen(APP_PORT, () => {
+    console.log('Server Gateway listening on port', APP_PORT)
 })
