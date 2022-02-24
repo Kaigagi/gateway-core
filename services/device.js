@@ -34,8 +34,11 @@ async function createNewDeviceFromWeb(deviceData){
         return {
             id: res.id,
             accessKey: deviceData.accessKey,
+            apiKey: "123",
             oid: deviceData.oid,
-            endpoint: "https://abc.com"
+            endpoint: "https://abc.com",
+            mqttUserName: "default",
+            mqttPassword: "default"
         }
     } catch (error) {
         console.log(error)
@@ -54,7 +57,6 @@ async function createDeviceInfo(id,accessKey,hardwareInfo) {
         throw new Error("wrong accessKey",{cause:"accessKey does not match"})
     }
 
-    console.log(typeof deviceData.hardwareInfo);
     if (Object.keys(deviceData.hardwareInfo).length === 0) {
         deviceData.hardwareInfo = hardwareInfo;
         await db.collection(databaseConstants.device).doc(id).update({hardwareInfo: hardwareInfo});
@@ -65,6 +67,23 @@ async function createDeviceInfo(id,accessKey,hardwareInfo) {
     return deviceData;
 }
 
+async function updataDeviceData(id,name,location,tags) {
+    await db.collection(databaseConstants.device).doc(id).update({
+        name: name,
+        location: location,
+        tags: tags
+    })
+}
 
-module.exports = {getAllDevices, createNewDeviceFromWeb,createDeviceInfo};
+async function deleteDevice(id) {
+    const deviceDoc = await db.collection(databaseConstants.device).doc(id);
+    const deviceSnapShot = await deviceDoc.get();
+    if (!deviceSnapShot.exists) {
+        throw new Error("doc does not exists");
+    }else{
+        deviceDoc.delete();
+    }
+}
+
+module.exports = {getAllDevices, createNewDeviceFromWeb,createDeviceInfo,updataDeviceData,deleteDevice};
 

@@ -1,5 +1,5 @@
 const express = require("express")
-const {getAllDevices, createNewDeviceFromWeb, createDeviceInfo} = require("../services/device")
+const {getAllDevices, createNewDeviceFromWeb, createDeviceInfo,updataDeviceData,deleteDevice} = require("../services/device")
 const Device = require("../models/device")
 const { headerConstants } = require("../config/constants/header_constants.js");
 const router = express.Router()
@@ -100,11 +100,70 @@ router.post("/device",async (req,res) => {
 })
 
 router.put("/device",(req,res) => {
+    try {
+        // check data validation
+        // check required field
+        const deviceName = req.body.name;
+        if (deviceName === "" || deviceName === undefined || deviceName === null) {
+            return res.sendStatus(404);
+        }
 
+        const deviceLocation = req.body.location;
+        if( deviceLocation === null || deviceLocation === undefined || deviceLocation === ""){
+            return res.sendStatus(404);
+        }
+
+        const deviceTags = req.body.tags;
+        if (!Array.isArray(deviceTags)) {
+            return res.sendStatus(404);
+        }
+
+        const id = req.body.id;
+        if (id === "" || id === undefined || id === null) {
+            
+        }
+
+        //header check
+        const apiKey = req.get(headerConstants.apiKeyHeader);
+        //check apiKey
+        if (apiKey !== API_KEY) {
+            return res.sendStatus(403);
+        }
+
+        //business logic
+        updataDeviceData(
+            id, /*device id */
+            deviceName, /*device name */
+            deviceLocation, /*device location */
+            req.body.tags /*device tags */
+        );
+        return res.sendStatus(200);
+    } catch (error) {
+        console.log(error);
+    }
 })
 
-router.delete("/device",(req,res) => {
+router.delete("/device/:id",async (req,res) => {
+    try {
+        // check data validation
+        // required field
+        const id = req.params.id;
+        if (id === "" || id === undefined || id === null) {
+            return res.sendStatus(404);
+        }
 
+        await deleteDevice(id);
+        // for more detail about this 204 status
+        // https://www.mscharhag.com/api-design/rest-deleting-resources
+        res.sendStatus(204); 
+    }catch(error) {
+        if (error.message === "doc does not exists") {
+            res.sendStatus(404);
+        }else{
+            res.sendStatus(500);
+        }
+        console.log(error);
+    }
 })
 
 module.exports = router
