@@ -1,4 +1,5 @@
 const { getFirestore } = require("firebase-admin/firestore");
+const { databaseConstants } = require("../config/constants/database_constants");
 const Data = require("../models/data");
 const db = getFirestore()
 // Maybe move somewhere else
@@ -43,7 +44,7 @@ async function postDeviceSensorData(did, bodyTemperature,faceMask, covidIdentifi
         // The firestore Node.js client do not support serialization of custom classes. here a way to get through
         // https://stackoverflow.com/questions/52221578/firestore-doesnt-support-javascript-objects-with-custom-prototypes
         // also this is the least performant, should we parse by hand or using class who know but the Lead said so
-        const res = await db.collection('data').add(JSON.parse(JSON.stringify(deviceSensorData)))
+        const res = await db.collection(databaseConstants.data).add(JSON.parse(JSON.stringify(deviceSensorData)))
 }
 
 module.exports = {
