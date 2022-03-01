@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require("cors");
-const dotven = require("dotenv").config()
+const dotenv = require("dotenv").config()
 const admin = require('firebase-admin');
 const winston = require('winston');
 const expressWinston = require('express-winston');

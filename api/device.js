@@ -4,7 +4,7 @@ const Device = require("../models/device")
 const { headerConstants } = require("../config/constants/header_constants.js");
 const router = express.Router()
 
-const API_KEY = "123";
+const API_KEY = process.env.API_KEY;
 
 router.get("/device", async (req,res) => {
     try {
