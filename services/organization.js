@@ -9,14 +9,20 @@ const { databaseConstants } = require("../config/constants/database_constants.js
 
 async function createNewOrg(name, id, image) {
     const downloadToken = nanoid();
+
+    // metadata
     const metadata = {
         metadata: {
           // This line is very important. It's to create a download token.
+          // We need this so we can manage our own download Token otherwise it will be automatically generated
           firebaseStorageDownloadTokens: downloadToken
         },
         contentType: 'image/png',
-        cacheControl: 'public, max-age=31536000',
+        // cache time
+        cacheControl: 'public, max-age=31536000', 
     };
+
+    //upload image
     await bucket.upload('./upload/'+id,{
         metadata: metadata
     });
@@ -37,6 +43,8 @@ async function createNewOrg(name, id, image) {
 
     const orgDocRef = db.collection(databaseConstants.organization).doc(id);
     const orgDoc = await orgDocRef.get();
+
+    // check if not exists
     if (!orgDoc.exists) {
         await db.collection(databaseConstants.organization).doc(id).set(JSON.parse(JSON.stringify(organization)));
     }else{
@@ -47,6 +55,7 @@ async function createNewOrg(name, id, image) {
 async function updateOrg(id,name) {
     const orgDocRef = db.collection(databaseConstants.organization).doc(id);
     const orgDoc = await orgDocRef.get();
+    // check if exists
     if (orgDoc.exists) {
         await db.collection(databaseConstants.organization).doc(id).update({
             name: name

@@ -6,6 +6,7 @@ const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './upload/')
     },
+    // name the image by the org id
     filename: function (req, file, cb) {
         cb(null, req.body.id);
     }
@@ -39,9 +40,10 @@ router.post("/organization", upload.single("image") ,async (req,res) => {
         const result = await createNewOrg(
             orgName,
             orgId,
-            req.file
+            req.file // the image file using multer package
         )
 
+        // 201: created
         return res.sendStatus(201);
     } catch (error) {
         if (error.message === "org already exists") {
@@ -59,7 +61,6 @@ router.put("/organization",async (req,res) => {
         if (orgName === "" || typeof orgName !== "string" || orgName === null || orgName === undefined) {
             return res.sendStatus(404);
         }
-
         const orgId = req.body.id;
         if (orgId === "" || typeof orgId !== "string" || orgId === null || orgId === undefined) {
             return res.sendStatus(404);
@@ -72,8 +73,6 @@ router.put("/organization",async (req,res) => {
         }
 
         //business logic
-        // this endpoint enable organization to update their image too
-        // but we are still working on a solution for the image
         const result = await updateOrg(orgId, orgName);
 
         return res.sendStatus(200);
