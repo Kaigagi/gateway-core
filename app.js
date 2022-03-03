@@ -42,7 +42,13 @@ app.use(expressWinston.logger({
 
 app.use(express.json())
 app.use(express.urlencoded())
-app.use(cors())
+
+// Learn about CORS here
+// 1. https://auth0.com/blog/cors-tutorial-a-guide-to-cross-origin-resource-sharing/
+// 
+app.use(cors( {
+  origin: '*'
+}))
 
 // Api route
 app.use(`/api/${process.env.API_VERSION}`,organizationRoute)
@@ -50,7 +56,7 @@ app.use(`/api/${process.env.API_VERSION}`,deviceRoute)
 app.use(`/api/${process.env.API_VERSION}`,dataRoute)
 // Heath Check API
 app.get('/_health', (req,res)=>{
-  res.status(200).send("OK")
+  res.status(200).send("Server is OK")
 })  
 
 //Broker
