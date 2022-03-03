@@ -1,12 +1,22 @@
 
 const express = require("express")
 const router = express.Router()
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './upload/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, req.body.id);
+    }
+})
+const upload = multer({storage: storage});
 const { headerConstants } = require("../config/constants/header_constants.js");
 const {createNewOrg,updateOrg} = require("../services/organization")
 
 const API_KEY = process.env.API_KEY;
 
-router.post("/organization",async (req,res) => {
+router.post("/organization", upload.single("image") ,async (req,res) => {
     try {
         // check data validation
         const orgName =  req.body.name;
@@ -25,13 +35,11 @@ router.post("/organization",async (req,res) => {
             return res.sendStatus(403);
         }
 
-        const orgImageUrl = "https://www.hoasen.edu.vn/wp-content/uploads/2022/02/HSU.jpg"; // will be replace later with an atualy image of the org
-        const orgEndPoint = process.env.SERVER_DOMAIN+"/org/"+orgId;
-
         //business logic
         const result = await createNewOrg(
             orgName,
-            orgId
+            orgId,
+            req.file
         )
 
         return res.sendStatus(201);

@@ -1,11 +1,28 @@
 const { getFirestore } = require("firebase-admin/firestore");
-const db = getFirestore()
+const { getStorage } = require('firebase-admin/storage');
+const db = getFirestore();
+const storage = getStorage();
+const bucket = storage.bucket();
+const { nanoid } = require('nanoid');
 const Organization = require("../models/organization")
 const { databaseConstants } = require("../config/constants/database_constants.js");
 
-async function createNewOrg(name, id) {
+async function createNewOrg(name, id, image) {
+    const downloadToken = nanoid();
+    const metadata = {
+        metadata: {
+          // This line is very important. It's to create a download token.
+          firebaseStorageDownloadTokens: downloadToken
+        },
+        contentType: 'image/png',
+        cacheControl: 'public, max-age=31536000',
+    };
+    await bucket.upload('./upload/'+id,{
+        metadata: metadata
+    });
+
     // this will be replace later with an atualy image of the org
-    const orgImageUrl = "https://www.hoasen.edu.vn/wp-content/uploads/2022/02/HSU.jpg"; 
+    const orgImageUrl = "https://firebasestorage.googleapis.com/v0/b/gdsc-gateway.appspot.com/o/"+id+"?alt=media&token="+downloadToken; 
     const orgEndPoint = process.env.SERVER_DOMAIN+"/org/"+id;
 
     const organization = new Organization(

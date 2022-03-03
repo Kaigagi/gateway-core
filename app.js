@@ -11,7 +11,8 @@ const app = express();
 const serviceAccount = require(process.env.SERVICE_ACCOUNT_PATH);
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount),
+  storageBucket: "gdsc-gateway.appspot.com"
 })
 
 // Route import
