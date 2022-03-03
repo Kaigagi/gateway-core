@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require("cors");
-const dotven = require("dotenv").config()
+const dotenv = require("dotenv").config()
 const admin = require('firebase-admin');
 const winston = require('winston');
 const expressWinston = require('express-winston');
@@ -11,7 +11,8 @@ const app = express();
 const serviceAccount = require(process.env.SERVICE_ACCOUNT_PATH);
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount),
+  storageBucket: "gdsc-gateway.appspot.com"
 })
 
 // Route import

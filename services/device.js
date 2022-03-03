@@ -85,5 +85,11 @@ async function deleteDevice(id) {
     }
 }
 
-module.exports = {getAllDevices, createNewDeviceFromWeb,createDeviceInfo,updataDeviceData,deleteDevice};
+module.exports = {
+    getAllDevices, 
+    createNewDeviceFromWeb,
+    createDeviceInfo,
+    updataDeviceData,
+    deleteDevice
+};
 
