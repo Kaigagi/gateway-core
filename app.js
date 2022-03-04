@@ -6,7 +6,6 @@ const winston = require('winston');
 const expressWinston = require('express-winston');
 const app = express();
 
-console.log(process.env.SERVICE_ACCOUNT_PATH)
 // Firebstore account setup
 const serviceAccount = require(process.env.SERVICE_ACCOUNT_PATH);
 

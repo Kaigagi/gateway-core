@@ -19,7 +19,10 @@ async function getAllDevices(){
 }
 
 async function createNewDeviceFromWeb(deviceData){
-    try {
+    //check oid
+    const orgDocRef = db.collection(databaseConstants.organization).doc(deviceData.oid);
+    const orgDoc = await orgDocRef.get();
+    if (orgDoc.exists) {
         // set device accessKey
         deviceData.accessKey = nanoid();
 
@@ -38,8 +41,8 @@ async function createNewDeviceFromWeb(deviceData){
             mqttUserName: process.env.MQTT_USERNAME,
             mqttPassword: process.env.MQTT_PASSWORD
         }
-    } catch (error) {
-        console.log(error)
+    }else{
+        throw new Error("org does not exist")
     }
 }
 
