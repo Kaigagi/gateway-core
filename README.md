@@ -19,9 +19,9 @@ SERVICE_ACCOUNT_PATH=<firebase_your_service_account>
     ``` nodemon app.js ```
 
 ## Running using Docker 
-```docker pull <docker-registry-url>:<tag> ```
-```docker build .```
-```docker run --rm -p 3000:3000 1883:1883 gateway-core:<tag> ```
+```docker pull <docker-registry-url>:<tag> ```\
+```docker build .```\
+```docker run --rm -p 3000:3000 1883:1883 gateway-core:<tag> ```\
 # Naming Conventions
 ## Use noun for Resourses
 Example:
