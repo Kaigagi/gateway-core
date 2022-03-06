@@ -38,9 +38,9 @@ router.post("/organization", upload.single("image") ,async (req,res) => {
 
         //business logic
         const result = await createNewOrg(
+            req.body.uid, // user unique id
             orgName,
             orgId,
-            req.file // the image file using multer package
         )
 
         // 201: created
@@ -54,7 +54,7 @@ router.post("/organization", upload.single("image") ,async (req,res) => {
     }
 })
 
-router.put("/organization",async (req,res) => {
+router.put("/organization", upload.single("image"), async (req,res) => {
     try {
         //check data validation
         const orgName =  req.body.name;

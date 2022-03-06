@@ -2,8 +2,6 @@ const { getFirestore } = require("firebase-admin/firestore");
 const db = getFirestore()
 const { nanoid } = require('nanoid');
 const { databaseConstants } = require("../config/constants/database_constants.js");
-const { headerConstants } = require("../config/constants/header_constants.js");
-const { messageConstants } = require("../config/constants/message_constants.js");
 
 async function getAllDevices(){
     try {
@@ -21,7 +19,10 @@ async function getAllDevices(){
 }
 
 async function createNewDeviceFromWeb(deviceData){
-    try {
+    //check oid
+    const orgDocRef = db.collection(databaseConstants.organization).doc(deviceData.oid);
+    const orgDoc = await orgDocRef.get();
+    if (orgDoc.exists) {
         // set device accessKey
         deviceData.accessKey = nanoid();
 
@@ -34,14 +35,14 @@ async function createNewDeviceFromWeb(deviceData){
         return {
             id: res.id,
             accessKey: deviceData.accessKey,
-            apiKey: "123",
+            apiKey: process.env.apiKey,
             oid: deviceData.oid,
-            endpoint: "https://abc.com",
-            mqttUserName: "default",
-            mqttPassword: "default"
+            endpoint: process.env.ENDPOINT,
+            mqttUserName: process.env.MQTT_USERNAME,
+            mqttPassword: process.env.MQTT_PASSWORD
         }
-    } catch (error) {
-        console.log(error)
+    }else{
+        throw new Error("org does not exist")
     }
 }
 
