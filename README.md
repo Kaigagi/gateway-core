@@ -1,11 +1,15 @@
 # Introduction
 Gateway backend
 # How to use
-You had to create file .env with this folloling value:\
+
+## Clone the Project and run its locally
+You had to create file .env with this folloling value:
+
 EXPRESS_PORT=3000\
 BROKER_PORT=1833\
 API_VERSION=v1\
 SERVICE_ACCOUNT_PATH=<firebase_your_service_account>
+
 
 - First
 
@@ -22,6 +26,12 @@ SERVICE_ACCOUNT_PATH=<firebase_your_service_account>
 ```docker pull <docker-registry-url>:<tag> ```\
 ```docker build .```\
 ```docker run --rm -p 3000:3000 1883:1883 gateway-core:<tag> ```\
+## Using terraform to provision for the Google Cloud
+``` cd tf```\
+``` terraform init```\
+``` terraform plan```\
+``` terraform apply```
+
 # Naming Conventions
 ## Use noun for Resourses
 Example:
