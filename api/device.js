@@ -46,7 +46,7 @@ router.post("/device/did-new",async (req,res) => {
         const deviceData = new Device(
             "123", /*mock id*/
             undefined,/*accessKey */
-            "HSU", /*oid */
+            req.body.oid, /*oid */
             deviceName,/*device name */
             deviceLocation,/*device location */
             {},/*hardware info */
@@ -57,6 +57,9 @@ router.post("/device/did-new",async (req,res) => {
         res.status = 200;
         res.send(result);
     } catch (error) {
+        if (error.message === "org does not exist") {
+            return res.sendStatus(404);
+        }
         console.log(error);
         return res.sendStatus(500);
     }

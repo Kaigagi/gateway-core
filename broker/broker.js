@@ -4,8 +4,8 @@ const { updateDeviceStatus } = require('../services/device_status');
 const broker = aedes();
 const server = require('net').createServer(broker.handle)
 
-let usernameBroker = "GDSCHSU";
-let passwordBroker = "Mailaanhem123";
+let usernameBroker = process.env.BROKER_USERNAME;
+let passwordBroker = process.env.BROKER_PASSWORD;
 
 broker.authenticate = function (client, username, password, callback) {
     let test = password.toString("utf8");

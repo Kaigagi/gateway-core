@@ -4,8 +4,8 @@ module.exports = class Device {
         this.accessKey = accessKey; // string required
         this.oid = oid; // string required
         this.name = name; // string required
-        this.location = location; // string required
-        this.hardwareInfo = hardwareInfo; // json required
-        this.tags = tags; // array<string> required
+        this.location = location; // string
+        this.hardwareInfo = hardwareInfo; // json
+        this.tags = tags; // array<string> 
     }
 }

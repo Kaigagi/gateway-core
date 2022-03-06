@@ -3,4 +3,5 @@ module.exports.databaseConstants = {
     organization: "organizations",
     data: "data",
     device_status: "device_status",
+    user: "users"
 }
