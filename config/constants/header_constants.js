@@ -1,4 +1,5 @@
 module.exports.headerConstants = {
     apiKeyHeader: "api-x-key",
-    deviceKeyHeader: "access-key"
+    deviceKeyHeader: "access-key",
+    tokenHeader: "token"
 }

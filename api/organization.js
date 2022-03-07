@@ -13,9 +13,30 @@ const storage = multer.diskStorage({
 })
 const upload = multer({storage: storage});
 const { headerConstants } = require("../config/constants/header_constants.js");
-const {createNewOrg,updateOrg} = require("../services/organization")
+const {createNewOrg, updateOrg, getOrganization} = require("../services/organization")
 
 const API_KEY = process.env.API_KEY;
+
+router.get("organization", async (req,res)=>{
+    try {
+        //check token
+        const token = req.get(headerConstants.tokenHeader);
+        if (token === null|| token === undefined || token === "" || typeof token !== "string") {
+            return res.sendStatus()
+        }
+
+        //business logic
+        const result = await getOrganization(token);
+        res.header = "200";
+        res.send(result);
+    } catch (error) {
+        console.log(error);
+        if (error.message === "user does not belong to any organization") {
+            res.sendStatus(400);
+        }
+        res.sendStatus(500);
+    }
+})
 
 router.post("/organization", upload.single("image") ,async (req,res) => {
     try {
@@ -26,7 +47,7 @@ router.post("/organization", upload.single("image") ,async (req,res) => {
         }
 
         const orgId = req.body.id;
-        if (orgId === "" || typeof orgId !== "string" || orgId === null || orgId === undefined) {
+        if (orgId === "" || typeof orgId !== "string" || orgId === null || orgId === undefined || orgId.includes("/")|| orgId !== "." || orgId.includes(".*")) {
             return res.sendStatus(404);
         }
 

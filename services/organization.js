@@ -1,5 +1,6 @@
 const { getFirestore } = require("firebase-admin/firestore");
 const { getStorage } = require('firebase-admin/storage');
+const {getAuth} = require('firebase-admin/auth')
 const db = getFirestore();
 const storage = getStorage();
 const bucket = storage.bucket();
@@ -102,7 +103,25 @@ async function updateOrg(id,name) {
     }
 }
 
+async function getOrganization(token) {
+    let uid;
+    getAuth()
+        .verifyIdToken(token)
+        .then((decodedToken) => {
+            uid = decodedToken.uid;
+        })
+    const userDocRef = db.collection(databaseConstants.user).doc(uid);
+    const userDoc = await userDocRef.get();
+    if (userDoc.exists) {
+        const oid = (await db.collection(databaseConstants.user).doc(uid).get()).data().oid;
+        return (await db.collection(databaseConstants.organization).doc(oid).get()).data();
+    }else{
+        throw new Error("user does not belong to any organization")
+    }
+}
+
 module.exports = {
     createNewOrg,
-    updateOrg
+    updateOrg,
+    getOrganization
 }
