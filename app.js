@@ -30,7 +30,6 @@ const deviceRoute = require("./api/device.js")
 const dataRoute = require("./api/data.js");
 const server = require('./broker/broker');
 
-
 // Logger setup
 app.use(expressWinston.logger({
     transports: [
@@ -70,29 +69,26 @@ app.get('/_health', (req,res)=>{
 
 const httpServer = http.createServer(app);
 
-if (process.env.NODE_ENV === "production"){
 
-  // SSL key - TODO: Will add path to environment later
-  // If you want your server to be HTTPS then you should insstall certbot 
-  // https://certbot.eff.org/ choose the right option and then follow the instruction
-  // fix the ssl path if needed 
+// SSL key - TODO: Will add path to environment later
+// If you want your server to be HTTPS then you should insstall certbot 
+// https://certbot.eff.org/ choose the right option and then follow the instruction
+// fix the ssl path if needed 
 
-  const privateKey  = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/privkey.pem', 'utf8');
-  const certificate = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/cert.pem', 'utf8');
-  const credentials = {key: privateKey, cert: certificate};
+const privateKey  = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/cert.pem', 'utf8');
+const credentials = {key: privateKey, cert: certificate};
 
-  const httpsServer = https.createServer(credentials, app);
+const httpsServer = https.createServer(credentials, app);
   // const httpsBrokerServer = https.createServer(credentials, server)
 
   // httpsBrokerServer.listen(process.env.BROKER_PORT, function () {
   //   console.log('Broker started and listening on port',process.env.BROKER_PORT);
   // })
 
-  httpsServer.listen(443, () => {
+httpsServer.listen(443, () => {
     console.log('[*] Https Server Gateway listening on port', 443)
-  })
-}
-
+})
 
 // Broker Confing
 server.listen(process.env.BROKER_PORT,()=>{
