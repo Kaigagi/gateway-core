@@ -14,7 +14,7 @@ const { applicationDefault } = require('firebase-admin/app');
 // If you want your server to be HTTPS then you should insstall certbot 
 // https://certbot.eff.org/ choose the right option and then follow the instruction
 // fix the ssl path if needed 
-if(process.env.PRODUCTION){
+if(process.env.NODE_ENV === "production"){
   const privateKey  = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/privkey.pem', 'utf8');
   const certificate = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/privkey.pem', 'utf8');
   const credentials = {key: privateKey, cert: certificate};
@@ -24,7 +24,7 @@ if(process.env.PRODUCTION){
 const serviceAccount = require(process.env.SERVICE_ACCOUNT_PATH);
 
 
-if(process.env.PRODUCTION){
+if(process.env.NODE_ENV === "production"){
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     storageBucket: "gdsc-gateway.appspot.com"
@@ -83,7 +83,7 @@ app.get('/_health', (req,res)=>{
 const httpServer = http.createServer(app);
 const httpBrokerServer = http.createServer(server)
 
-if (process.env.PRODUCTION){
+if (process.env.NODE_ENV === "production"){
   const httpsServer = https.createServer(credentials, app);
   const httpsBrokerServer = https.createServer(credentials, server)
 
@@ -116,7 +116,7 @@ const startGracefulShutdown = ()=>{
     console.log("[*] Http Server Closed")
   })
 
-  if(process.env.PRODUCTION){
+  if(process.env.NODE_ENV === "production"){
     httpsServer.close(()=>{
       console.log("[*] Https Server Closed")
     })
