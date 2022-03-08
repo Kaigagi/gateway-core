@@ -21,20 +21,21 @@ if(process.env.NODE_ENV === "production"){
 }
 
 // Firestore account setup
-const serviceAccount = require(process.env.SERVICE_ACCOUNT_PATH);
+
 
 
 if(process.env.NODE_ENV === "production"){
+  admin.initializeApp({
+    credential: applicationDefault(),
+    storageBucket: "gdsc-gateway.appspot.com"
+})
+}else{
+  const serviceAccount = require(process.env.SERVICE_ACCOUNT_PATH);
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     storageBucket: "gdsc-gateway.appspot.com"
   })
 }
-
-admin.initializeApp({
-    credential: applicationDefault(),
-    storageBucket: "gdsc-gateway.appspot.com"
-})
 
 // Route import
 const organizationRoute = require("./api/organization.js")
