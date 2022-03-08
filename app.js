@@ -69,7 +69,6 @@ app.get('/_health', (req,res)=>{
 })  
 
 const httpServer = http.createServer(app);
-const httpBrokerServer = http.createServer(server)
 
 if (process.env.NODE_ENV === "production"){
 
@@ -83,11 +82,11 @@ if (process.env.NODE_ENV === "production"){
   const credentials = {key: privateKey, cert: certificate};
 
   const httpsServer = https.createServer(credentials, app);
-  const httpsBrokerServer = https.createServer(credentials, server)
+  // const httpsBrokerServer = https.createServer(credentials, server)
 
-  httpsBrokerServer.listen(process.env.BROKER_PORT, function () {
-    console.log('Broker started and listening on port',process.env.BROKER_PORT);
-  })
+  // httpsBrokerServer.listen(process.env.BROKER_PORT, function () {
+  //   console.log('Broker started and listening on port',process.env.BROKER_PORT);
+  // })
 
   httpsServer.listen(443, () => {
     console.log('Server Gateway listening on port', process.env.EXPRESS_PORT)
@@ -96,8 +95,8 @@ if (process.env.NODE_ENV === "production"){
 
 
 // Broker Confing
-httpBrokerServer.listen(1885,()=>{
-  console.log('Broker started and listening on port', 1885);
+server.listen(process.env.BROKER_PORT,()=>{
+  console.log('Broker started and listening on port', process.env.BROKER_PORT);
 })
 
 // Express Server config
@@ -118,17 +117,13 @@ const startGracefulShutdown = ()=>{
     httpsServer.close(()=>{
       console.log("[*] Https Server Closed")
     })
-  
-    httpsBrokerServer.close(()=>{
-      console.log("[*] Https Broker Server Closed")
-      process.exit(1  )
-    })
   }
   // Should read more of these 
   // 1: https://hackernoon.com/graceful-shutdown-in-nodejs-2f8f59d1c357
   // 2: https://blog.heroku.com/best-practices-nodejs-errors
-  httpBrokerServer.close(()=>{
+  server.close(()=>{
     console.log("[*] Http Broker Server Closed")
+    process.exit(1)
   })
  
 }
