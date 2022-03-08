@@ -89,7 +89,7 @@ if (process.env.NODE_ENV === "production"){
   // })
 
   httpsServer.listen(443, () => {
-    console.log('Server Gateway listening on port', process.env.EXPRESS_PORT)
+    console.log('[*] Https Server Gateway listening on port', 443)
   })
 }
 
@@ -101,7 +101,7 @@ server.listen(process.env.BROKER_PORT,()=>{
 
 // Express Server config
 httpServer.listen(process.env.EXPRESS_PORT, () => {
-    console.log('Server Gateway listening on port', process.env.EXPRESS_PORT)
+    console.log('[*] Http Server Gateway listening on port', process.env.EXPRESS_PORT)
 })
 
 
