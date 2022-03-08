@@ -5,6 +5,7 @@ const db = getFirestore();
 const storage = getStorage();
 const bucket = storage.bucket();
 const { nanoid } = require('nanoid');
+const fs = require('fs');
 const Organization = require("../models/organization")
 const { databaseConstants } = require("../config/constants/database_constants.js");
 
@@ -72,6 +73,10 @@ async function createNewOrg(token, name, id) {
         )
 
         await db.collection(databaseConstants.organization).doc(id).set(JSON.parse(JSON.stringify(organization)));
+        // delete image on server
+        fs.unlink('./upload/'+id, (error)=>{
+            console.log(error);
+        });
     }else{
         throw new Error("org already exists");
     }
@@ -128,6 +133,11 @@ async function updateOrg(token, id, name) {
             name: name,
             imageUrl: orgImageUrl
         })
+
+        // delete image on server
+        fs.unlink('./upload/'+id, (error)=>{
+            console.log(error);
+        });
     }else{
         throw new Error("org does not exists")
     }
