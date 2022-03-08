@@ -10,20 +10,7 @@ const expressWinston = require('express-winston');
 const app = express();
 const { applicationDefault } = require('firebase-admin/app');
 
-// SSL key - TODO: Will add path to environment later
-// If you want your server to be HTTPS then you should insstall certbot 
-// https://certbot.eff.org/ choose the right option and then follow the instruction
-// fix the ssl path if needed 
-if(process.env.NODE_ENV === "production"){
-  const privateKey  = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/privkey.pem', 'utf8');
-  const certificate = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/privkey.pem', 'utf8');
-  const credentials = {key: privateKey, cert: certificate};
-}
-
 // Firestore account setup
-
-
-
 if(process.env.NODE_ENV === "production"){
   admin.initializeApp({
     credential: applicationDefault(),
@@ -85,6 +72,16 @@ const httpServer = http.createServer(app);
 const httpBrokerServer = http.createServer(server)
 
 if (process.env.NODE_ENV === "production"){
+
+  // SSL key - TODO: Will add path to environment later
+  // If you want your server to be HTTPS then you should insstall certbot 
+  // https://certbot.eff.org/ choose the right option and then follow the instruction
+  // fix the ssl path if needed 
+  
+  const privateKey  = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/privkey.pem', 'utf8');
+  const certificate = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/privkey.pem', 'utf8');
+  const credentials = {key: privateKey, cert: certificate};
+
   const httpsServer = https.createServer(credentials, app);
   const httpsBrokerServer = https.createServer(credentials, server)
 
