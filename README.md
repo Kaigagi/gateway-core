@@ -1,6 +1,6 @@
 # Introduction
 Gateway Backend, this README.md is trying to guide you how to deploy and how to acctualy use this codebase
-it will try to help you understand the codebase and its convention as quick as posisble (Hopefully). This Gatewaw Backend is using Nodejs, Express and Firestore
+it will try to help you understand the codebase and its convention as quick as posisble (Hopefully). This Gateway Backend is using Nodejs, Express and Firestore
 
 Terraform to provision compute engine on GCP (Use can skip this part if you are deploy it on your local machine or private cloud, private server)
 
