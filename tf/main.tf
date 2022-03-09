@@ -58,7 +58,7 @@ resource "google_compute_firewall" "vm_instance" {
 
   allow {
     protocol = "tcp"
-    ports    = ["80", "8080", "1883", "3000", "22"]
+    ports    = ["80", "8080", "1883", "3000", "22","443"]
 
   }
   source_ranges = ["0.0.0.0/0"]

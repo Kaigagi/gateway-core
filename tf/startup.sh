@@ -4,5 +4,4 @@ sudo apt-get install -y nodejs
 sudo apt-get install git
 cd ~/
 git clone https://github.com/GDSC-HSU/gateway-core.git
-cd ~/gateway-core
-sudo npm i 
+cd ~/gateway-core && sudo npm i 
