@@ -2,7 +2,12 @@ const { getFirestore } = require("firebase-admin/firestore");
 const db = getFirestore()
 const { nanoid } = require('nanoid');
 const { databaseConstants } = require("../config/constants/database_constants.js");
+const Device = require("../models/device.js");
 
+/**
+ * Get all device that currently available 
+ * @returns {Array<Device>} Return an array of Device (class) 
+ */
 async function getAllDevices(){
     try {
         // get device data and push into an array
@@ -18,6 +23,13 @@ async function getAllDevices(){
     }
 }
 
+
+/**
+ * Create new device from web
+ * 
+ * @param {Device} deviceData - A Device Object,
+ * @returns {}
+ */
 async function createNewDeviceFromWeb(deviceData){
     //check oid
     const orgDocRef = db.collection(databaseConstants.organization).doc(deviceData.oid);
@@ -45,7 +57,13 @@ async function createNewDeviceFromWeb(deviceData){
         throw new Error("org does not exist")
     }
 }
-
+/**
+ * Create Device Information 
+ * @param {*} id 
+ * @param {*} accessKey 
+ * @param {*} hardwareInfo 
+ * @returns 
+ */
 async function createDeviceInfo(id,accessKey,hardwareInfo) {
     const deviceData =  (await db.collection((databaseConstants.device)).doc(id).get()).data(); // try to get device data
     // check id
@@ -68,6 +86,13 @@ async function createDeviceInfo(id,accessKey,hardwareInfo) {
     return deviceData;
 }
 
+/**
+ * 
+ * @param {*} id 
+ * @param {*} name 
+ * @param {*} location 
+ * @param {*} tags 
+ */
 async function updataDeviceData(id,name,location,tags) {
     await db.collection(databaseConstants.device).doc(id).update({
         name: name,
@@ -76,6 +101,10 @@ async function updataDeviceData(id,name,location,tags) {
     })
 }
 
+/**
+ * 
+ * @param {*} id 
+ */
 async function deleteDevice(id) {
     const deviceDoc = await db.collection(databaseConstants.device).doc(id);
     const deviceSnapShot = await deviceDoc.get();
