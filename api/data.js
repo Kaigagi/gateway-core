@@ -7,7 +7,12 @@ const router = express.Router()
 router.get("/data", (req, res) => {
 
 })
-
+/**
+ * @swagger
+ * /data:
+ *  get:
+ *      
+ */
 router.post("/data", async (req, res) => {
     try {
         // Must have Access Key and Api key 

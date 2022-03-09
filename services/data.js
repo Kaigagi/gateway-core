@@ -5,6 +5,15 @@ const db = getFirestore()
 // Maybe move somewhere else
 const SUPPORTED_COVIDIDENTIFICATION = ["QR","RFID"]
 
+/**
+ * Send all the sensor information (person's scan) to the server 
+ * @param {*} did - device id 
+ * @param {*} bodyTemperature - the body temperature of person that scan 
+ * @param {*} faceMask - fakemask of the person
+ * @param {*} covidIdentification - the method that person use to check in
+ * @param {*} isComplete - 
+ * @return 
+ */
 async function postDeviceSensorData(did, bodyTemperature,faceMask, covidIdentification,isComplete){
         // Checking all the parameters that are required and check its datatype
 

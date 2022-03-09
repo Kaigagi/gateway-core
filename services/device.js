@@ -2,7 +2,12 @@ const { getFirestore } = require("firebase-admin/firestore");
 const db = getFirestore()
 const { nanoid } = require('nanoid');
 const { databaseConstants } = require("../config/constants/database_constants.js");
+const Device = require("../models/device.js");
 
+/**
+ * Get all device that currently available 
+ * @returns {Array<Device>} Return an array of Device (class) 
+ */
 async function getAllDevices(){
     try {
         // get device data and push into an array
@@ -18,7 +23,18 @@ async function getAllDevices(){
     }
 }
 
+<<<<<<< HEAD
 async function createNewDeviceFromWeb(uid, deviceData){
+=======
+
+/**
+ * Create new device from web
+ * 
+ * @param {Device} deviceData - A Device Object,
+ * @returns {}
+ */
+async function createNewDeviceFromWeb(deviceData){
+>>>>>>> e641e493f426859b2d0d3e139ad02ed7ba63e8d3
     //check oid
     const userDocRef = db.collection(databaseConstants.user).doc(uid);
     const userDoc = await userDocRef.get();
@@ -50,7 +66,13 @@ async function createNewDeviceFromWeb(uid, deviceData){
         throw new Error("org does not exist")
     }
 }
-
+/**
+ * Create Device Information 
+ * @param {*} id 
+ * @param {*} accessKey 
+ * @param {*} hardwareInfo 
+ * @returns 
+ */
 async function createDeviceInfo(id,accessKey,hardwareInfo) {
     const deviceData =  (await db.collection((databaseConstants.device)).doc(id).get()).data(); // try to get device data
     // check id
@@ -73,14 +95,30 @@ async function createDeviceInfo(id,accessKey,hardwareInfo) {
     return deviceData;
 }
 
+<<<<<<< HEAD
 async function updataDeviceData(did,name,location,tags) {
     await db.collection(databaseConstants.device).doc(did).update({
+=======
+/**
+ * 
+ * @param {*} id 
+ * @param {*} name 
+ * @param {*} location 
+ * @param {*} tags 
+ */
+async function updataDeviceData(id,name,location,tags) {
+    await db.collection(databaseConstants.device).doc(id).update({
+>>>>>>> e641e493f426859b2d0d3e139ad02ed7ba63e8d3
         name: name,
         location: location,
         tags: tags
     })
 }
 
+/**
+ * 
+ * @param {*} id 
+ */
 async function deleteDevice(id) {
     const deviceDoc = await db.collection(databaseConstants.device).doc(id);
     const deviceSnapShot = await deviceDoc.get();
