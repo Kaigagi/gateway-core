@@ -1,27 +1,39 @@
 # Introduction
-Gateway backend
+Gateway Backend, this README.md is trying to guide you how to deploy and how to acctualy use this codebase
+it will try to help you understand the codebase and its convention as quick as posisble (Hopefully). This Gatewaw Backend is using Nodejs, Express and Firestore
+
+Terraform to provision compute engine on GCP (Use can skip this part if you are deploy it on your local machine or private cloud, private server)
+
+We are trying to modularize backend components for you guys, to deploy and change the components if necessary (-_-) but right now it's not
+
 # How to use
+## First you need to clone this project to your local machine or your server 
 
-## Clone the Project and run its locally
-You had to create file .env with this folloling value:
 
-EXPRESS_PORT=3000\
-BROKER_PORT=1833\
-API_VERSION=v1\
+```git clone https://github.com/GDSC-HSU/gateway-core.git``` 
+
+After you clone it, you have to create file .env with this folloling value: 
+
+``` cd gateway-core ``` 
+```
+EXPRESS_PORT=3000
+BROKER_PORT=1833
+API_VERSION=v1
 SERVICE_ACCOUNT_PATH=<firebase_your_service_account>
+NODE_ENV= 
+```
+    
+```npm install ```
 
+ ```nodemon app.js ```
 
-- First
+## If Deploy on GCP
+Set **NODE_ENV=production**
 
-    ```git clone https://github.com/GDSC-HSU/gateway-core.git```
+set credential: applicationDefault() in app.js to use service account that you attach to the compute engine that you create but first make sure you create **firebase service account**
+.If you don't set to production it will find the local service account json file on you local repository read this to setup service account https://firebase.google.com/docs/admin/setup
 
-- Second run this command 
-
-    ``` npm install ```
-- Third is to 
-
-    ``` nodemon app.js ```
-
+## Setup let's encrypt for https (Must have domain) 
 ## Running using Docker 
 ```docker pull <docker-registry-url>:<tag> ```\
 ```docker build .```\
@@ -32,18 +44,18 @@ SERVICE_ACCOUNT_PATH=<firebase_your_service_account>
 ``` terraform plan```\
 ``` terraform apply```
 
-# Naming Conventions
-## Use noun for Resourses
+## Naming Conventions
+### Use noun for Resourses
 Example:
 ```js
 let userInfo
 ```
-## Use verb for Function name
+### Use verb for Function name
 
 ```js
 function getUserInfo()
 ```
-## Use lowerCamelCase for variables, properties and function names
+### Use lowerCamelCase for variables, properties and function names
 
 Variables, properties and function names should use `lowerCamelCase`.  They
 should also be descriptive. Single character variables and uncommon
@@ -61,7 +73,7 @@ var adminUser = db.query('SELECT * FROM users ...');
 var admin_user = db.query('SELECT * FROM users ...');
 ```
 
-## Use UpperCamelCase for class names
+### Use UpperCamelCase for class names
 
 Class names should be capitalized using `UpperCamelCase`.
 
