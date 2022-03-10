@@ -59,8 +59,8 @@ router.post("/device/did-new", checkToken, async (req,res) => {
         res.send(result);
     } catch (error) {
         console.log(error);
-        if (error.message === "org does not exist") {
-            return res.sendStatus(404);
+        if (error.message === "user already belong to an org") {
+            return res.sendStatus(405);
         }
         return res.sendStatus(500);
     }
@@ -97,8 +97,11 @@ router.post("/device",async (req,res) => {
        if (error.message === "wrong accessKey" ) {
            res.sendStatus(403);
        }
-       if(error.message === "already has hardwareInfo" || error.message === "invalid id"){
+       if(error.message === "invalid id"){
            res.sendStatus(404);
+       }
+       if (error.message === "already has hardwareInfo") {
+           res.sendStatus(409);
        }
    }
 })

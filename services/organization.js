@@ -73,24 +73,21 @@ async function createNewOrg(uid, name, id, imageName) {
         )
 
         await db.collection(databaseConstants.organization).doc(id).set(JSON.parse(JSON.stringify(organization)));
-        // delete image on server
-        fs.unlink('./upload/'+imageName, (error)=>{
-            console.log(error);
-        });
     }else{
         throw new Error("org already exists");
     }
+    // delete image on server
+    fs.unlink('./upload/'+imageName, (error)=>{
+        console.log(error);
+    });
 }
 
-async function updateOrg(uid, id, name, imageName) {
+async function updateOrg(uid, name, imageName) {
 
     const userDocRef = db.collection(databaseConstants.user).doc(uid);
     const userDoc = await userDocRef.get();
 
-    // if user has already belong to an org, throw error
-    if (userDoc.data().oid !== id) {
-        throw new Error("user does not belong to this org")
-    }
+    const id = userDoc.data().oid;
 
     const orgDocRef = db.collection(databaseConstants.organization).doc(id);
     const orgDoc = await orgDocRef.get();
@@ -124,14 +121,13 @@ async function updateOrg(uid, id, name, imageName) {
             name: name,
             imageUrl: orgImageUrl
         })
-
-        // delete image on server
-        fs.unlink('./upload/'+imageName, (error)=>{
-            console.log(error);
-        });
     }else{
         throw new Error("org does not exists")
     }
+    // delete image on server
+    fs.unlink('./upload/'+imageName, (error)=>{
+        console.log(error);
+    });
 }
 
 async function getOrganization(uid) {

@@ -17,7 +17,7 @@ router.use(async (req, res, next) =>{
         next();
     } catch (error) {
         console.log(error)
-        return res.sendStatus(404)
+        return res.sendStatus(406)
     }
 });
 

@@ -98,6 +98,7 @@ async function createDeviceInfo(id,accessKey,hardwareInfo) {
  * @param {*} tags 
  */
 async function updataDeviceData(did,name,location,tags) {
+    //TODO: check if device belong to user's organization
     await db.collection(databaseConstants.device).doc(did).update({
         name: name,
         location: location,
