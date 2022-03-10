@@ -7,7 +7,7 @@ env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   GCE_INSTANCE: gateway-vm-298937ac0287ee22  
   GCE_INSTANCE_ZONE: asia-east1-b
-  
+
 jobs:
   deploy:
     runs-on: ubuntu-latest    
@@ -18,7 +18,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@master
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          service_account_key: ${{ secrets.GCE_SA_KEY }}
           export_default_credentials: true
 
 #       - name: Use gcloud CLI
