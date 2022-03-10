@@ -9,16 +9,16 @@ const fs = require('fs');
 const Organization = require("../models/organization")
 const { databaseConstants } = require("../config/constants/database_constants.js");
 
-async function createNewOrg(token, name, id) {
-    //verify token and get uid
-    let uid;
-    try {
-        const decodedToken = await getAuth().verifyIdToken(token);
-        uid = decodedToken.uid;
-    } catch (error) {
-        console.log(error)
-        throw new Error("token invalid")
-    }
+async function createNewOrg(uid, name, id, imageName) {
+    // //verify token and get uid
+    // let uid;
+    // try {
+    //     const decodedToken = await getAuth().verifyIdToken(token);
+    //     uid = decodedToken.uid;
+    // } catch (error) {
+    //     console.log(error)
+    //     throw new Error("token invalid")
+    // }
 
     const orgDocRef = db.collection(databaseConstants.organization).doc(id);
     const orgDoc = await orgDocRef.get();
@@ -54,7 +54,7 @@ async function createNewOrg(token, name, id) {
         };
 
         //upload image
-        await bucket.upload('./upload/'+id,{
+        await bucket.upload('./upload/'+imageName,{
             metadata: metadata
         });
 
@@ -74,7 +74,7 @@ async function createNewOrg(token, name, id) {
 
         await db.collection(databaseConstants.organization).doc(id).set(JSON.parse(JSON.stringify(organization)));
         // delete image on server
-        fs.unlink('./upload/'+id, (error)=>{
+        fs.unlink('./upload/'+imageName, (error)=>{
             console.log(error);
         });
     }else{
@@ -82,16 +82,7 @@ async function createNewOrg(token, name, id) {
     }
 }
 
-async function updateOrg(token, id, name) {
-    //verify token and get uid
-    let uid;
-    try {
-        const decodedToken = await getAuth().verifyIdToken(token);
-        uid = decodedToken.uid;
-    } catch (error) {
-        console.log(error)
-        throw new Error("token invalid")
-    }
+async function updateOrg(uid, id, name, imageName) {
 
     const userDocRef = db.collection(databaseConstants.user).doc(uid);
     const userDoc = await userDocRef.get();
@@ -122,7 +113,7 @@ async function updateOrg(token, id, name) {
         };
 
         //upload image
-        await bucket.upload('./upload/'+id,{
+        await bucket.upload('./upload/'+imageName,{
             metadata: metadata
         });
 
@@ -135,7 +126,7 @@ async function updateOrg(token, id, name) {
         })
 
         // delete image on server
-        fs.unlink('./upload/'+id, (error)=>{
+        fs.unlink('./upload/'+imageName, (error)=>{
             console.log(error);
         });
     }else{
@@ -143,17 +134,7 @@ async function updateOrg(token, id, name) {
     }
 }
 
-async function getOrganization(token) {
-    //verify token and get uid
-    let uid;
-    try {
-        const decodedToken = await getAuth().verifyIdToken(token);
-        uid = decodedToken.uid;
-    } catch (error) {
-        console.log(error)
-        throw new Error("token invalid")
-    }
-
+async function getOrganization(uid) {
     const userDocRef = db.collection(databaseConstants.user).doc(uid);
     const userDoc = await userDocRef.get();
     if (userDoc.exists) {
@@ -164,8 +145,9 @@ async function getOrganization(token) {
     }
 }
 
+
 module.exports = {
     createNewOrg,
     updateOrg,
-    getOrganization
+    getOrganization,
 }

@@ -1,6 +1,7 @@
 
-const express = require("express")
-const router = express.Router()
+const express = require("express");
+const router = express.Router();
+const { nanoid } = require('nanoid');
 const multer = require('multer');
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -8,16 +9,19 @@ const storage = multer.diskStorage({
     },
     // name the image by the org id
     filename: function (req, file, cb) {
-        cb(null, req.body.id);
+        const imageName = nanoid();
+        req.body.imageName = imageName;
+        cb(null, imageName);
     }
 })
 const upload = multer({storage: storage});
 const { headerConstants } = require("../config/constants/header_constants.js");
 const {createNewOrg, updateOrg, getOrganization} = require("../services/organization")
+const checkToken = require("../middleware/token_check");
 
 const API_KEY = process.env.API_KEY;
 
-router.get("/organization", async (req,res)=>{
+router.get("/organization",checkToken, async (req,res)=>{
     try {
         //check token
         const token = req.get(headerConstants.tokenHeader);
@@ -26,20 +30,19 @@ router.get("/organization", async (req,res)=>{
         }
 
         //business logic
-        const result = await getOrganization(token);
-        res.header = "200";
+        const result = await getOrganization(req.body.uid);
         res.send(result);
     } catch (error) {
         console.log(error);
         if (error.message === "user does not belong to any organization" || error.message === "token invalid") {
-            res.sendStatus(400);
+            return res.sendStatus(400);
         }
-        res.sendStatus(500);
+        return res.sendStatus(500);
     }
 })
 
-router.post("/organization", upload.single("image") ,async (req,res) => {
-    try {
+router.post("/organization", upload.single("image"),checkToken,async (req,res) => {
+    try {   
         //check token
         const token = req.get(headerConstants.tokenHeader);
         if (token === null|| token === undefined || token === "" || typeof token !== "string") {
@@ -52,11 +55,11 @@ router.post("/organization", upload.single("image") ,async (req,res) => {
             return res.sendStatus(404);
         }
 
+
         const orgId = req.body.id;
         if (orgId === "" || typeof orgId !== "string" || orgId === null || orgId === undefined || orgId.includes("/")|| orgId === "." || orgId.includes(".*")) {
             return res.sendStatus(404);
         }
-
 
         // check Header
         const apiKey = req.get(headerConstants.apiKeyHeader); 
@@ -66,9 +69,10 @@ router.post("/organization", upload.single("image") ,async (req,res) => {
 
         //business logic
         const result = await createNewOrg(
-            token, 
+            req.body.uid,
             orgName,
             orgId,
+            req.body.imageName
         )
 
         // 201: created
@@ -82,7 +86,7 @@ router.post("/organization", upload.single("image") ,async (req,res) => {
     }
 })
 
-router.put("/organization", upload.single("image"), async (req,res) => {
+router.put("/organization",upload.single("image"),checkToken, async (req,res) => {
     try {
         //check token
         const token = req.get(headerConstants.tokenHeader);
@@ -107,7 +111,7 @@ router.put("/organization", upload.single("image"), async (req,res) => {
         }
 
         //business logic
-        const result = await updateOrg(token, orgId, orgName);
+        const result = await updateOrg(uid, orgId, orgName, req.body.imageName);
 
         return res.sendStatus(200);
     } catch (error) {

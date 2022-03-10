@@ -23,18 +23,22 @@ async function getAllDevices(){
     }
 }
 
-
 /**
  * Create new device from web
  * 
  * @param {Device} deviceData - A Device Object,
  * @returns {}
  */
-async function createNewDeviceFromWeb(deviceData){
+async function createNewDeviceFromWeb(uid, deviceData){
     //check oid
-    const orgDocRef = db.collection(databaseConstants.organization).doc(deviceData.oid);
-    const orgDoc = await orgDocRef.get();
-    if (orgDoc.exists) {
+    const userDocRef = db.collection(databaseConstants.user).doc(uid);
+    const userDoc = await userDocRef.get();
+
+
+    if (userDoc.exists) {
+        // set oid
+        const oid = userDoc.data().oid;
+        deviceData.oid = oid;
         // set device accessKey
         deviceData.accessKey = nanoid();
 
@@ -93,8 +97,8 @@ async function createDeviceInfo(id,accessKey,hardwareInfo) {
  * @param {*} location 
  * @param {*} tags 
  */
-async function updataDeviceData(id,name,location,tags) {
-    await db.collection(databaseConstants.device).doc(id).update({
+async function updataDeviceData(did,name,location,tags) {
+    await db.collection(databaseConstants.device).doc(did).update({
         name: name,
         location: location,
         tags: tags
