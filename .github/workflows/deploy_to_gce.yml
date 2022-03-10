@@ -28,8 +28,8 @@ jobs:
 #           gcloud compute instances list
 
       - name: Connect GCE and Execute Script
-        run: |-
+        run: |
           gcloud compute ssh "$GCE_INSTANCE" --zone "$GCE_INSTANCE_ZONE" -- 'sudo -i'
           cd gateway-core && git pull origin main
-          npm i
-          pm2 restart app.js
+          /root/gateway-core npm i
+          /root/gateway-core pm2 restart app.js
