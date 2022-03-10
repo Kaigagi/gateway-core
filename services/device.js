@@ -23,25 +23,20 @@ async function getAllDevices(){
     }
 }
 
-<<<<<<< HEAD
-async function createNewDeviceFromWeb(uid, deviceData){
-=======
-
 /**
  * Create new device from web
  * 
  * @param {Device} deviceData - A Device Object,
  * @returns {}
  */
-async function createNewDeviceFromWeb(deviceData){
->>>>>>> e641e493f426859b2d0d3e139ad02ed7ba63e8d3
+async function createNewDeviceFromWeb(uid, deviceData){
     //check oid
     const userDocRef = db.collection(databaseConstants.user).doc(uid);
     const userDoc = await userDocRef.get();
 
 
     if (userDoc.exists) {
-        //set oid
+        // set oid
         const oid = userDoc.data().oid;
         deviceData.oid = oid;
         // set device accessKey
@@ -95,10 +90,6 @@ async function createDeviceInfo(id,accessKey,hardwareInfo) {
     return deviceData;
 }
 
-<<<<<<< HEAD
-async function updataDeviceData(did,name,location,tags) {
-    await db.collection(databaseConstants.device).doc(did).update({
-=======
 /**
  * 
  * @param {*} id 
@@ -106,9 +97,8 @@ async function updataDeviceData(did,name,location,tags) {
  * @param {*} location 
  * @param {*} tags 
  */
-async function updataDeviceData(id,name,location,tags) {
-    await db.collection(databaseConstants.device).doc(id).update({
->>>>>>> e641e493f426859b2d0d3e139ad02ed7ba63e8d3
+async function updataDeviceData(did,name,location,tags) {
+    await db.collection(databaseConstants.device).doc(did).update({
         name: name,
         location: location,
         tags: tags
