@@ -54,8 +54,8 @@ async function createNewDeviceFromWeb(uid, deviceData){
             apiKey: process.env.apiKey,
             oid: deviceData.oid,
             endpoint: process.env.ENDPOINT,
-            mqttUserName: process.env.MQTT_USERNAME,
-            mqttPassword: process.env.MQTT_PASSWORD
+            mqttUserName: process.env.BROKER_USERNAME,
+            mqttPassword: process.env.BROKER_PASSWORD,
         }
     }else{
         throw new Error("org does not exist")
