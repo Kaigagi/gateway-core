@@ -3,10 +3,11 @@ const {getAllDevices, createNewDeviceFromWeb, createDeviceInfo,updataDeviceData,
 const Device = require("../models/device")
 const { headerConstants } = require("../config/constants/header_constants.js");
 const router = express.Router()
+const checkToken = require("../middleware/token_check");
 
 const API_KEY = process.env.API_KEY;
 
-router.get("/device", async (req,res) => {
+router.get("/device", checkToken, async (req,res) => {
     try {
         // check header
         const apiKey = req.get(headerConstants.apiKeyHeader);
@@ -22,7 +23,7 @@ router.get("/device", async (req,res) => {
     }
 })
 
-router.post("/device/did-new",async (req,res) => {
+router.post("/device/did-new", checkToken, async (req,res) => {
     try {
         // check data validation
         // required field
@@ -46,21 +47,21 @@ router.post("/device/did-new",async (req,res) => {
         const deviceData = new Device(
             "123", /*mock id*/
             undefined,/*accessKey */
-            req.body.oid, /*oid */
+            "abc",/*mock oid */
             deviceName,/*device name */
             deviceLocation,/*device location */
             {},/*hardware info */
-            []/*tags */
+            req.body.tags/*tags */
         );
 
-        let result = await createNewDeviceFromWeb(deviceData); // return the result
+        let result = await createNewDeviceFromWeb(req.body.uid, deviceData); // return the result
         res.status = 200;
         res.send(result);
     } catch (error) {
-        if (error.message === "org does not exist") {
-            return res.sendStatus(404);
-        }
         console.log(error);
+        if (error.message === "user already belong to an org") {
+            return res.sendStatus(405);
+        }
         return res.sendStatus(500);
     }
 })
@@ -96,14 +97,18 @@ router.post("/device",async (req,res) => {
        if (error.message === "wrong accessKey" ) {
            res.sendStatus(403);
        }
-       if(error.message === "already has hardwareInfo" || error.message === "invalid id"){
+       if(error.message === "invalid id"){
            res.sendStatus(404);
+       }
+       if (error.message === "already has hardwareInfo") {
+           res.sendStatus(409);
        }
    }
 })
 
-router.put("/device",(req,res) => {
+router.put("/device",checkToken,(req,res) => {
     try {
+        //TO DO: check if the device belong to the user's organization
         // check data validation
         // check required field
         const deviceName = req.body.name;
@@ -121,9 +126,9 @@ router.put("/device",(req,res) => {
             return res.sendStatus(404);
         }
 
-        const id = req.body.id;
-        if (id === "" || id === undefined || id === null) {
-            
+        const did = req.body.did;
+        if (did === "" || did === undefined || did === null) {
+            return res.sendStatus(404);
         }
 
         //header check
@@ -135,7 +140,7 @@ router.put("/device",(req,res) => {
 
         //business logic
         updataDeviceData(
-            id, /*device id */
+            did, /*device id */
             deviceName, /*device name */
             deviceLocation, /*device location */
             req.body.tags /*device tags */
@@ -146,7 +151,7 @@ router.put("/device",(req,res) => {
     }
 })
 
-router.delete("/device/:id",async (req,res) => {
+router.delete("/device/:id",checkToken, async (req,res) => {
     try {
         // check data validation
         // required field
