@@ -29,5 +29,5 @@ jobs:
 
       - name: Connect GCE and Execute Script
         run: |
-          gcloud compute ssh "$GCE_INSTANCE" --zone "$GCE_INSTANCE_ZONE" -- 'pwd;sudo -i;pwd;cd gateway-core && git pull origin main;npm i;restart app.js'
+          gcloud compute ssh "$GCE_INSTANCE" --zone "$GCE_INSTANCE_ZONE" --command="pwd;sudo -i;pwd;cd gateway-core && git pull origin main;npm i;restart app.js"
           
