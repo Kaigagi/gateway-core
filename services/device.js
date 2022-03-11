@@ -54,11 +54,11 @@ async function createNewDeviceFromWeb(uid, deviceData){
             apiKey: process.env.API_KEY,
             oid: deviceData.oid,
             endpoint: process.env.ENDPOINT,
-            mqttUserName: process.env.MQTT_USERNAME,
-            mqttPassword: process.env.MQTT_PASSWORD
+            mqttUserName: process.env.BROKER_USERNAME,
+            mqttPassword: process.env.BROKER_PASSWORD
         }
     }else{
-        throw new Error("user already belong to an org")
+        throw new Error("user does not belong to any org")
     }
 }
 /**
@@ -114,7 +114,7 @@ async function deleteDevice(id) {
     const deviceDoc = await db.collection(databaseConstants.device).doc(id);
     const deviceSnapShot = await deviceDoc.get();
     if (!deviceSnapShot.exists) {
-        throw new Error("doc does not exists");
+        throw new Error("invalid deviceId");
     }else{
         deviceDoc.delete();
     }

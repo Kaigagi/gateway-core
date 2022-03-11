@@ -21,7 +21,8 @@ router.post("/data", async (req, res) => {
         // TODO: Check the FORMAT of the accessKey and API key (does it in the pool of the key or not)
         if (accessKey === null || accessKey === undefined) {
             if (accessKey) { }
-            res.sendStatus(403)
+            res.status = 403;
+            return res.send("invalid apiKey");
         }
         // Pass logic to the data service, using function postDeviceSensorData
         let result = await postDeviceSensorData(
@@ -34,7 +35,8 @@ router.post("/data", async (req, res) => {
         res.sendStatus(200)
     } catch (err) {
         if (err.message === "wrong datatype" || err.message === "wrong value") {
-            res.sendStatus(404)
+            res.status = 404;
+            return res.send("invalid value or datatype");
         } else {
             console.log(err)
             res.sendStatus(500)
