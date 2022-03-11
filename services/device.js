@@ -51,14 +51,14 @@ async function createNewDeviceFromWeb(uid, deviceData){
         return {
             id: res.id,
             accessKey: deviceData.accessKey,
-            apiKey: process.env.apiKey,
+            apiKey: process.env.API_KEY,
             oid: deviceData.oid,
             endpoint: process.env.ENDPOINT,
             mqttUserName: process.env.MQTT_USERNAME,
             mqttPassword: process.env.MQTT_PASSWORD
         }
     }else{
-        throw new Error("org does not exist")
+        throw new Error("user already belong to an org")
     }
 }
 /**
