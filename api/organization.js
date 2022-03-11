@@ -67,9 +67,7 @@ router.post("/organization", upload.single("image"),checkToken,async (req,res) =
             orgId,
             req.body.imageName
         )
-
-        // 201: created
-        return res.sendStatus(201);
+        return res.sendStatus(200);
     } catch (error) {
         console.log(error);
         if (error.message === "org already exists" ) {

@@ -183,9 +183,7 @@ router.delete("/device/:id",checkToken, async (req,res) => {
         }
 
         await deleteDevice(id);
-        // for more detail about this 204 status
-        // https://www.mscharhag.com/api-design/rest-deleting-resources
-        res.sendStatus(204); 
+        res.sendStatus(200); 
     }catch(error) {
         if (error.message === "invalid deviceId") {
             res.status = 404;
