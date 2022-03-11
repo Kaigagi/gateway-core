@@ -32,9 +32,28 @@ const server = require('./broker/broker');
 const { env } = require('process');
 
 // Logger setup
+// TODO: Need to Config the logging system again
+let options = {
+  file: {
+    level: 'info',
+    filename: `./logs/gatway.log`,
+    handleExceptions: true,
+    json: true,
+    maxsize: 5242880, // 5MB
+    maxFiles: 5,
+    colorize: false,
+  },
+  console: {
+    level: 'debug',
+    handleExceptions: true,
+    json: false,
+    colorize: true,
+  },
+}
 app.use(expressWinston.logger({
     transports: [
-      new winston.transports.Console()
+      new winston.transports.Console(options.file),
+      new winston.transports.File(options.file),
     ],
     format: winston.format.combine(
       winston.format.timestamp(),
@@ -79,8 +98,8 @@ let httpsServer = undefined
 if (process.env.NODE_ENV === "production"){
   const privateKey  = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/privkey.pem', 'utf8');
   const certificate = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/cert.pem', 'utf8');
-  const fullchain = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/fullchain.pem')
-  const chain  = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/chain.pem')
+  const fullchain = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/fullchain.pem','utf8')
+  const chain  = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/chain.pem','utf8')
   const credentials = {key: privateKey, cert: fullchain};
 
 
