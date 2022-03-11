@@ -18,7 +18,7 @@ async function postDeviceSensorData(did, bodyTemperature,faceMask, covidIdentifi
         // Checking all the parameters that are required and check its datatype
 
         if(did === undefined || did === null || did === ""){
-            throw new Error("wrong datatyoe",{cause:"did isn't exist"})
+            throw new Error("wrong datatype",{cause:"did isn't exist"})
         }
 
         if (Number.isInteger(bodyTemperature) === true|| bodyTemperature === undefined){
@@ -53,7 +53,37 @@ async function postDeviceSensorData(did, bodyTemperature,faceMask, covidIdentifi
         // also this is the least performant, should we parse by hand or using class who know but the Lead said so
         await db.collection(databaseConstants.data).add(JSON.parse(JSON.stringify(deviceSensorData)))
 }
+/**
+ * Get the sensor data with the timeframe given
+ * @param {*} did -  
+ * @param {timestamp} startTime -
+ * @param {timestamp} endTime - 
+ * @returns
+ */
+async function getDeviceSensorDataWithTime(did, startTime, endTime){
+        let result = []
+        if(did === undefined || did === null || did === ""){
+            throw new Error("wrong datatype",{cause:"did isn't exist"})
+        }
 
+        // Check format of the startTime and EndTime
+
+        // Check for Legit start and end timestamp query
+        if(startTime > endTime){
+                throw new Error("wrong datatype",{cause: "startTime and endTime is not valid"})
+        }
+
+        const dataRef = await dd.collection(databaseConstants.data)
+        const snapshot = await dataRef.where('timestamp', '>=', 'startTime').where('timestamp','<=','endTime').get()
+        if (snapshot.empty){
+                return;
+        }
+        snapshot.forEach(doc=>{
+                result.push(doc.data())
+        })
+        return result
+}
 module.exports = {
-    postDeviceSensorData
+    postDeviceSensorData,
+    getDeviceSensorDataWithTime
 }
