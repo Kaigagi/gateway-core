@@ -79,7 +79,9 @@ let httpsServer = undefined
 if (process.env.NODE_ENV === "production"){
   const privateKey  = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/privkey.pem', 'utf8');
   const certificate = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/cert.pem', 'utf8');
-  const credentials = {key: privateKey, cert: certificate};
+  const fullchain = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/fullchain.pem')
+  const chain  = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/chain.pem')
+  const credentials = {key: privateKey, cert: fullchain};
 
 
   httpsServer = https.createServer(credentials, app);
