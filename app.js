@@ -75,13 +75,14 @@ const httpServer = http.createServer(app);
 // If you want your server to be HTTPS then you should insstall certbot 
 // https://certbot.eff.org/ choose the right option and then follow the instruction
 // fix the ssl path if needed 
+const httpsServer
 if (process.env.NODE_ENV === "production"){
   const privateKey  = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/privkey.pem', 'utf8');
   const certificate = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/cert.pem', 'utf8');
   const credentials = {key: privateKey, cert: certificate};
 
 
-  const httpsServer = https.createServer(credentials, app);
+  httpsServer = https.createServer(credentials, app);
   // const httpsBrokerServer = https.createServer(credentials, server)
 
   // httpsBrokerServer.listen(process.env.BROKER_PORT, function () {
