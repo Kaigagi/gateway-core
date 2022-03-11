@@ -10,15 +10,6 @@ const Organization = require("../models/organization")
 const { databaseConstants } = require("../config/constants/database_constants.js");
 
 async function createNewOrg(uid, name, id, imageName) {
-    // //verify token and get uid
-    // let uid;
-    // try {
-    //     const decodedToken = await getAuth().verifyIdToken(token);
-    //     uid = decodedToken.uid;
-    // } catch (error) {
-    //     console.log(error)
-    //     throw new Error("token invalid")
-    // }
 
     const orgDocRef = db.collection(databaseConstants.organization).doc(id);
     const orgDoc = await orgDocRef.get();

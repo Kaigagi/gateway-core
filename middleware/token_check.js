@@ -17,7 +17,8 @@ router.use(async (req, res, next) =>{
         next();
     } catch (error) {
         console.log(error)
-        return res.sendStatus(406)
+        res.status = 406;
+        return res.send("expired or invalid token");
     }
 });
 

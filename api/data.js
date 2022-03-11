@@ -33,6 +33,7 @@ router.post("/data", async (req, res) => {
         // Must have Access Key and Api key 
         let accessKey = req.get(headerConstants.deviceKeyHeader)
         let apiKey = req.get(headerConstants.apiKeyHeader)
+
         // Check Header first
         if (accessKey === null || accessKey === undefined || accessKey === "") {
             res.status(403).json({
@@ -45,6 +46,7 @@ router.post("/data", async (req, res) => {
                 message: "api-x-key invalid"
             })
             return;
+
         }
         // Pass logic to the data service, using function postDeviceSensorData
         let result = await postDeviceSensorData(
