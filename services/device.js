@@ -55,7 +55,7 @@ async function createNewDeviceFromWeb(uid, deviceData){
             oid: deviceData.oid,
             endpoint: process.env.ENDPOINT,
             mqttUserName: process.env.BROKER_USERNAME,
-            mqttPassword: process.env.BROKER_PASSWORD
+            mqttPassword: process.env.BROKER_PASSWORD,
         }
     }else{
         throw new Error("user does not belong to any org")

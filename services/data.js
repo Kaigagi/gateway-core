@@ -42,18 +42,16 @@ async function postDeviceSensorData(did, bodyTemperature,faceMask, covidIdentifi
         if (SUPPORTED_COVIDIDENTIFICATION.includes(covidIdentification.identificationMethod) == false){
             throw new Error("wrong value", {cause: "identification_method isn't QR or RFID"})
         }
-        
         // Server timestamp (must be careful of the server location)
         const timestamp = Date.now()
 
         // Map data
         const deviceSensorData = new Data(did, bodyTemperature,faceMask,covidIdentification,isComplete, timestamp)
-        
         // Write to database (Cloud Firestore)
         // The firestore Node.js client do not support serialization of custom classes. here a way to get through
         // https://stackoverflow.com/questions/52221578/firestore-doesnt-support-javascript-objects-with-custom-prototypes
         // also this is the least performant, should we parse by hand or using class who know but the Lead said so
-        const res = await db.collection(databaseConstants.data).add(JSON.parse(JSON.stringify(deviceSensorData)))
+        await db.collection(databaseConstants.data).add(JSON.parse(JSON.stringify(deviceSensorData)))
 }
 
 module.exports = {
