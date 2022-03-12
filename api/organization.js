@@ -60,28 +60,26 @@ router.get("/organization",checkToken, async (req,res)=>{
 
 router.post("/organization", upload.single("image"),checkToken,async (req,res) => {
     try {   
-        //check token
-        const token = req.get(headerConstants.tokenHeader);
-        if (token === null|| token === undefined || token === "" || typeof token !== "string") {
-            return res.sendStatus(404);
-        }
 
         // check data validation
         const orgName =  req.body.name;
         if (orgName === "" || typeof orgName !== "string" || orgName === null || orgName === undefined) {
-            return res.sendStatus(404);
+            res.status = 404;
+            return res.send("missing orgName");
         }
 
 
         const orgId = req.body.id;
         if (orgId === "" || typeof orgId !== "string" || orgId === null || orgId === undefined || orgId.includes("/")|| orgId === "." || orgId.includes(".*")) {
-            return res.sendStatus(404);
+            res.status = 404;
+            return res.send("missing orgId");
         }
 
         // check Header
         const apiKey = req.get(headerConstants.apiKeyHeader); 
         if (apiKey !== API_KEY) {
-            return res.sendStatus(403);
+            res.status = 403;
+            return res.send("invalid apiKey");
         }
 
         //business logic
@@ -91,9 +89,7 @@ router.post("/organization", upload.single("image"),checkToken,async (req,res) =
             orgId,
             req.body.imageName
         )
-
-        // 201: created
-        return res.sendStatus(201);
+        return res.sendStatus(200);
     } catch (error) {
         console.log(error);
         if (error.message === "org already exists" ) {
@@ -112,22 +108,19 @@ router.post("/organization", upload.single("image"),checkToken,async (req,res) =
 
 router.put("/organization",upload.single("image"),checkToken, async (req,res) => {
     try {
-        //check token
-        const token = req.get(headerConstants.tokenHeader);
-        if (token === null|| token === undefined || token === "" || typeof token !== "string") {
-            return res.sendStatus(404);
-        }
 
         //check data validation
         const orgName =  req.body.name;
         if (orgName === "" || typeof orgName !== "string" || orgName === null || orgName === undefined) {
-            return res.sendStatus(404);
+            res.status = 404;
+            return res.send("missing orgName");
         }
 
         // check Header
         const apiKey = req.get(headerConstants.apiKeyHeader); 
         if (apiKey !== API_KEY) {
-            return res.sendStatus(403);
+            res.status = 403;
+            return res.send("invalid apiKey");
         }
 
         //business logic
@@ -137,7 +130,8 @@ router.put("/organization",upload.single("image"),checkToken, async (req,res) =>
     } catch (error) {
         console.log(error);
         if (error.message === "org does not exists" || error.message === "user does not belong to this org") {
-            return res.sendStatus(405);
+            res.status = 405;
+            return res.send(error.message);
         }
         return res.sendStatus(500);
     }
