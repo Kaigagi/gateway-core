@@ -14,11 +14,13 @@ router.use(async (req, res, next) =>{
         uid = decodedToken.uid;
         //set req.body.uid
         req.body.uid = uid;
+
         next();
     } catch (error) {
         console.log(error)
-        res.status = 406;
-        return res.send("expired or invalid token");
+        res.status(406).json({
+            message: "Invalid JWT token"
+        })
     }
 });
 

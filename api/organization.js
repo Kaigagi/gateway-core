@@ -20,17 +20,39 @@ const {createNewOrg, updateOrg, getOrganization} = require("../services/organiza
 const checkToken = require("../middleware/token_check");
 
 const API_KEY = process.env.API_KEY;
-
+/**
+ * Get the organization's information  
+ *
+ * 200 - return org's info
+ * 400 - user doesn't belong to any org
+ * 403 - Permission denied (jwt no vaild)
+ *
+* */
 router.get("/organization",checkToken, async (req,res)=>{
     try {
+        //check token exist or get pass or not
+        const token = req.get(headerConstants.tokenHeader);
+        if (token === null|| token === undefined || token === "" || typeof token !== "string") {
+            // return 403 
+            res.status(403).json({
+                message: "Permission Denied",
+                cause: "Token not provide"
+            })
+            return;
+        }
+
         //business logic
         const result = await getOrganization(req.body.uid);
-        res.send(result);
+
+        res.status(200).json(result)
+
     } catch (error) {
         console.log(error);
         if (error.message === "user does not belong to any organization") {
-            res.status = 400;
-            return res.send(error.message);
+            res.status(400).json({
+                message: error.message, 
+            })
+            return;
         }
         return res.sendStatus(500);
     }
@@ -67,16 +89,22 @@ router.post("/organization", upload.single("image"),checkToken,async (req,res) =
             orgId,
             req.body.imageName
         )
-        return res.sendStatus(200);
+
+        res.status(200).json({
+            message: "OK",
+        })
+
     } catch (error) {
         console.log(error);
         if (error.message === "org already exists" ) {
-            res.status = 409;
-            return res.send(error.message);
+            res.status(409).json({
+                message: error.message,
+            })
         }
         if (error.message === "user has already belong to an org") {
-            res.status = 401;
-            return res.send(error.message);
+             res.status(401).json({
+                message: error.message,
+            })
         }
         return res.sendStatus(500);
     }
@@ -88,26 +116,32 @@ router.put("/organization",upload.single("image"),checkToken, async (req,res) =>
         //check data validation
         const orgName =  req.body.name;
         if (orgName === "" || typeof orgName !== "string" || orgName === null || orgName === undefined) {
-            res.status = 404;
-            return res.send("missing orgName");
+                res.status(404).json({
+                message: "missing orgName"
+            })
         }
 
         // check Header
         const apiKey = req.get(headerConstants.apiKeyHeader); 
         if (apiKey !== API_KEY) {
-            res.status = 403;
-            return res.send("invalid apiKey");
+
+            res.status(403).json({
+                message: "invalid api-x-key"
+            })
         }
 
         //business logic
         const result = await updateOrg(req.body.uid, orgName, req.body.imageName);
 
-        return res.sendStatus(200);
+        res.status(200).json({
+            message: "OK"
+        })
     } catch (error) {
         console.log(error);
         if (error.message === "org does not exists" || error.message === "user does not belong to this org") {
-            res.status = 405;
-            return res.send(error.message);
+            res.status(405).json({
+                message: error.message,
+            })
         }
         return res.sendStatus(500);
     }
