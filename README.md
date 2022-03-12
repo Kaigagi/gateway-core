@@ -7,6 +7,7 @@ Terraform to provision compute engine on GCP (Use can skip this part if you are 
 We are trying to modularize backend components for you guys, to deploy and change the components if necessary (-_-) but right now it's not
 
 # How to use
+This is the way - Mando
 ## First you need to clone this project to your local machine or your server 
 
 
