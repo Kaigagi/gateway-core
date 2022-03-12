@@ -116,26 +116,32 @@ router.put("/organization",upload.single("image"),checkToken, async (req,res) =>
         //check data validation
         const orgName =  req.body.name;
         if (orgName === "" || typeof orgName !== "string" || orgName === null || orgName === undefined) {
-            res.status = 404;
-            return res.send("missing orgName");
+                res.status(404).json({
+                message: "missing orgName"
+            })
         }
 
         // check Header
         const apiKey = req.get(headerConstants.apiKeyHeader); 
         if (apiKey !== API_KEY) {
-            res.status = 403;
-            return res.send("invalid apiKey");
+
+            res.status(403).json({
+                message: "invalid api-x-key"
+            })
         }
 
         //business logic
         const result = await updateOrg(req.body.uid, orgName, req.body.imageName);
 
-        return res.sendStatus(200);
+        res.status(200).json({
+            message: "OK"
+        })
     } catch (error) {
         console.log(error);
         if (error.message === "org does not exists" || error.message === "user does not belong to this org") {
-            res.status = 405;
-            return res.send(error.message);
+            res.status(405).json({
+                message: error.message,
+            })
         }
         return res.sendStatus(500);
     }
