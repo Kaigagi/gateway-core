@@ -133,9 +133,12 @@ async function updateOrg(uid, name, imageName) {
 async function getOrganization(uid) {
     const userDocRef = db.collection(databaseConstants.user).doc(uid);
     const userDoc = await userDocRef.get();
+    // Check user exist 
     if (userDoc.exists) {
         const oid = (await db.collection(databaseConstants.user).doc(uid).get()).data().oid;
-        return (await db.collection(databaseConstants.organization).doc(oid).get()).data();
+        let result  =(await db.collection(databaseConstants.organization).doc(oid).get()).data();
+        
+        return result
     }else{
         throw new Error("user does not belong to any organization")
     }

@@ -20,22 +20,39 @@ const {createNewOrg, updateOrg, getOrganization} = require("../services/organiza
 const checkToken = require("../middleware/token_check");
 
 const API_KEY = process.env.API_KEY;
-
+/**
+ * Get the organization's information  
+ *
+ * 200 - return org's info
+ * 400 - user doesn't belong to any org
+ * 403 - Permission denied (jwt no vaild)
+ *
+* */
 router.get("/organization",checkToken, async (req,res)=>{
     try {
-        //check token
+        //check token exist or get pass or not
         const token = req.get(headerConstants.tokenHeader);
         if (token === null|| token === undefined || token === "" || typeof token !== "string") {
-            return res.sendStatus(404);
+            // return 403 
+            res.status(403).json({
+                message: "Permission Denied",
+                cause: "Token not provide"
+            })
+            return;
         }
 
         //business logic
         const result = await getOrganization(req.body.uid);
-        res.send(result);
+
+        res.status(200).json(result)
+
     } catch (error) {
         console.log(error);
         if (error.message === "user does not belong to any organization") {
-            return res.sendStatus(400);
+            res.status(400).json({
+                message: error.message, 
+            })
+            return;
         }
         return res.sendStatus(500);
     }
@@ -80,10 +97,14 @@ router.post("/organization", upload.single("image"),checkToken,async (req,res) =
     } catch (error) {
         console.log(error);
         if (error.message === "org already exists" ) {
-            return res.sendStatus(409)
+            res.status(409).json({
+                message: error.message,
+            })
         }
         if (error.message === "user has already belong to an org") {
-            return res.sendStatus(401);
+             res.status(401).json({
+                message: error.message,
+            })
         }
         return res.sendStatus(500);
     }
