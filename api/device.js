@@ -12,8 +12,10 @@ router.get("/device", checkToken, async (req,res) => {
         // check header
         const apiKey = req.get(headerConstants.apiKeyHeader);
         if(apiKey !== API_KEY){
-            res.status = 403;
-            return res.send("invalid apiKey");
+            res.status(403).json({
+                message: "invalid api-x-key"
+            })
+            return;
         }
         // get devices' data from database
         const allDevices = await getAllDevices();
@@ -30,21 +32,27 @@ router.post("/device/did-new", checkToken, async (req,res) => {
         // required field
         const deviceName = req.body.name;
         if( deviceName === null || deviceName === undefined || deviceName === ""){
-            res.status = 404;
-            return res.send("missing deviceName");
+            res.status(403).json({
+                message: "missing deviceName"
+            })
+            return;
         }
 
         const deviceLocation = req.body.location;
         if( deviceLocation === null || deviceLocation === undefined || deviceLocation === ""){
-            res.status = 404;
-            return res.send("missing deviceLocation");
+            res.status(404).json({
+                message: "missing deviceLocation"
+            })
+            return;
         }
 
         // check Header
         const apiKey = req.get(headerConstants.apiKeyHeader); 
         if (apiKey !== API_KEY) {
-            res.status = 403;
-            return res.send("invalid apiKey");
+            res.status(403).json({
+                message: "invalid api-x-key"
+            })
+            return;
         }
 
         // business logic
@@ -64,8 +72,10 @@ router.post("/device/did-new", checkToken, async (req,res) => {
     } catch (error) {
         console.log(error);
         if (error.message === "user does not belong to any org") {
-            res.status = 405;
-            return res.send(error.message);
+            res.status(405).json({
+                message : error.message
+            })
+            return;
         }
         return res.sendStatus(500);
     }
@@ -78,17 +88,21 @@ router.post("/device",async (req,res) => {
        //required field and its datatype
        const id = req.body.id;
        if (id === null || id === undefined || id === "") {
-            res.status = 404;
-            return res.send("missing deviceId");
+            res.status(404).json({
+                message: "missing deviceId"
+            })
+            return;
        }
+
 
        //header check
        const apiKey = req.get(headerConstants.apiKeyHeader);
        const accessKey = req.get(headerConstants.deviceKeyHeader);
        //check apiKey
        if (apiKey !== API_KEY) {
-            res.status = 403;
-            return res.send("invalid apiKey");
+            res.status(403).json({
+                message: "invalid api-x-key"
+            })
        }
 
        //business logic
@@ -123,34 +137,44 @@ router.put("/device",checkToken,(req,res) => {
         // check required field
         const deviceName = req.body.name;
         if (deviceName === "" || deviceName === undefined || deviceName === null) {
-            res.status = 404;
-            return res.send("missing deviceName");
+            res.status(404).json({
+                message: "missing deviceName",
+            })
+            return;
         }
 
         const deviceLocation = req.body.location;
         if( deviceLocation === null || deviceLocation === undefined || deviceLocation === ""){
-            res.status = 404;
-            return res.send("missing deviceLocation");
+            res.status(404).json({
+                message: "missing deviceLocation",
+            })
+            return;
         }
 
         const deviceTags = req.body.tags;
         if (!Array.isArray(deviceTags)) {
-            res.status = 404;
-            return res.send("device Tags must be an array");
+            res.status(404).json({
+                message: "device Tags must be an array",
+            })
+            return;
         }
 
         const did = req.body.did;
         if (did === "" || did === undefined || did === null) {
-            res.status = 404;
-            return res.send("missing deviceId");
+            res.status(404).json({
+                message: "missing deviceId"
+            })
+            return;
         }
 
         //header check
         const apiKey = req.get(headerConstants.apiKeyHeader);
         //check apiKey
         if (apiKey !== API_KEY) {
-            res.status = 403;
-            return res.send("invalid apiKey");
+            res.status(403).json({
+                message : "invalid api-x-key",
+            })
+            return;
         }
 
         //business logic
@@ -160,6 +184,7 @@ router.put("/device",checkToken,(req,res) => {
             deviceLocation, /*device location */
             req.body.tags /*device tags */
         );
+
         return res.sendStatus(200);
     } catch (error) {
         console.log(error);
@@ -186,8 +211,10 @@ router.delete("/device/:id",checkToken, async (req,res) => {
         res.sendStatus(200); 
     }catch(error) {
         if (error.message === "invalid deviceId") {
-            res.status = 404;
-            return res.send(error.message);
+            res.status(404).json({
+                message: error.message
+            })
+            return;
         }else{
             res.sendStatus(500);
         }
