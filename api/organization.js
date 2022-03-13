@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({storage: storage});
 const { headerConstants } = require("../config/constants/header_constants.js");
-const {createNewOrg, updateOrg, getOrganization} = require("../services/organization")
+const {createNewOrg, updateOrg, getOrganization, getOrganizationForDevice} = require("../services/organization")
 const checkToken = require("../middleware/token_check");
 
 const API_KEY = process.env.API_KEY;
@@ -142,6 +142,32 @@ router.put("/organization",upload.single("image"),checkToken, async (req,res) =>
             res.status(405).json({
                 message: error.message,
             })
+        }
+        return res.sendStatus(500);
+    }
+})
+
+router.get("/organization/:oid", async (req,res) => {
+    try {
+        // check data validation
+        const oid = req.params.oid;
+        if (oid === "" || oid === undefined || oid === null || typeof oid !== "string") {
+            res.status(404).json({
+                message: "oid invalid",
+            })
+        }
+
+        // business logic
+        const result = await getOrganizationForDevice(oid);
+
+        res.status(200).send(result);
+    } catch (error) {
+        console.log(error.message);
+        if (error.message === "oid does not exists") {
+            res.status(405).json({
+                message: error.message,
+            })
+            return
         }
         return res.sendStatus(500);
     }

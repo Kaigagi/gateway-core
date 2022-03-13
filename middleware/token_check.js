@@ -7,11 +7,8 @@ router.use(async (req, res, next) =>{
     try {
         const token = req.get(headerConstants.tokenHeader);
 
-        //verify token and get uid
-        let uid;
-
         const decodedToken = await getAuth().verifyIdToken(token);
-        uid = decodedToken.uid;
+        let uid = decodedToken.uid;
         //set req.body.uid
         req.body.uid = uid;
 
