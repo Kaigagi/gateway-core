@@ -149,6 +149,15 @@ router.put("/organization",upload.single("image"),checkToken, async (req,res) =>
 
 router.get("/organization/:oid", async (req,res) => {
     try {
+        // check Header
+        const apiKey = req.get(headerConstants.apiKeyHeader); 
+        if (apiKey !== API_KEY) {
+
+            res.status(403).json({
+                message: "invalid api-x-key"
+            })
+        }
+        
         // check data validation
         const oid = req.params.oid;
         if (oid === "" || oid === undefined || oid === null || typeof oid !== "string") {
