@@ -1,4 +1,6 @@
 // TODO: Clean up the hardcode field, and adding variable
+// TODO: Automatic create FireStore and add its service_account to this project 
+// TODO:
 
 provider "google" {
   project = var.project_id
@@ -42,6 +44,7 @@ resource "google_compute_instance" "vm_instance" {
   metadata_startup_script = file("./startup.sh")
   service_account {
     email = var.service_account_email 
+    scopes = 
   }
 }
 

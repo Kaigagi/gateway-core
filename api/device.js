@@ -67,8 +67,8 @@ router.post("/device/did-new", checkToken, async (req,res) => {
         );
 
         let result = await createNewDeviceFromWeb(req.body.uid, deviceData); // return the result
-        res.status = 200;
-        res.send(result);
+        res.status(200).json(result)
+
     } catch (error) {
         console.log(error);
         if (error.message === "user does not belong to any org") {
@@ -77,7 +77,7 @@ router.post("/device/did-new", checkToken, async (req,res) => {
             })
             return;
         }
-        return res.sendStatus(500);
+        res.sendStatus(500);
     }
 })
 
