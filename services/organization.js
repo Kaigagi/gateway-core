@@ -148,10 +148,33 @@ async function getOrganization(uid) {
         if (userDoc.exists) {
             const oid = (await db.collection(databaseConstants.user).doc(uid).get()).data().oid;
             let result  = (await db.collection(databaseConstants.organization).doc(oid).get()).data();
-            
+
             return result
         }else{
             throw new Error("user does not belong to any organization")
+        }
+    } catch (error) {
+        console.log(error.message);
+        throw new Error(error.message);
+    }
+}
+
+async function getOrganizationForDevice(oid) {
+    try {
+        const orgDocRef = db.collection(databaseConstants.organization).doc(oid);
+        const orgDoc = await orgDocRef.get();
+
+        if (orgDoc.exists) {
+            const orgData = orgDoc.data();
+            let result = {
+                name: orgData.name,
+                imageUrl: orgData.imageUrl,
+                oid: orgData.id,
+            }
+
+            return result;
+        }else{
+            throw new Error("oid does not exists");
         }
     } catch (error) {
         console.log(error.message);
@@ -164,4 +187,5 @@ module.exports = {
     createNewOrg,
     updateOrg,
     getOrganization,
+    getOrganizationForDevice,
 }
