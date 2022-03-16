@@ -112,6 +112,7 @@ router.post("/device",async (req,res) => {
             res.status(403).json({
                 message: "invalid api-x-key"
             })
+            return;
        }
 
        //business logic

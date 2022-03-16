@@ -59,8 +59,8 @@ router.get("/organization",checkToken, async (req,res)=>{
 })
 
 router.post("/organization", upload.single("image"),checkToken,async (req,res) => {
-    try {   
-
+    try {
+        let hasImage = true;
         // check data validation
         const orgName =  req.body.name;
         if (orgName === "" || typeof orgName !== "string" || orgName === null || orgName === undefined) {
@@ -82,12 +82,17 @@ router.post("/organization", upload.single("image"),checkToken,async (req,res) =
             return res.send("invalid apiKey");
         }
 
+        if (req.file === undefined) {
+            hasImage = false;
+        }
+
         //business logic
         const result = await createNewOrg(
             req.body.uid,
             orgName,
             orgId,
-            req.body.imageName
+            req.body.imageName,
+            hasImage
         )
 
         res.status(200).json({
@@ -100,11 +105,13 @@ router.post("/organization", upload.single("image"),checkToken,async (req,res) =
             res.status(409).json({
                 message: error.message,
             })
+            return;
         }
         if (error.message === "user has already belong to an org") {
-             res.status(401).json({
+            res.status(401).json({
                 message: error.message,
             })
+            return;
         }
         return res.sendStatus(500);
     }
@@ -112,6 +119,7 @@ router.post("/organization", upload.single("image"),checkToken,async (req,res) =
 
 router.put("/organization",upload.single("image"),checkToken, async (req,res) => {
     try {
+        let hasImage = true;
 
         //check data validation
         const orgName =  req.body.name;
@@ -130,8 +138,12 @@ router.put("/organization",upload.single("image"),checkToken, async (req,res) =>
             })
         }
 
+        if (req.file === undefined) {
+            hasImage = false;
+        }
+
         //business logic
-        const result = await updateOrg(req.body.uid, orgName, req.body.imageName);
+        const result = await updateOrg(req.body.uid, orgName, req.body.imageName,hasImage);
 
         res.status(200).json({
             message: "OK"
@@ -142,6 +154,7 @@ router.put("/organization",upload.single("image"),checkToken, async (req,res) =>
             res.status(405).json({
                 message: error.message,
             })
+            return;
         }
         return res.sendStatus(500);
     }
@@ -172,7 +185,7 @@ router.get("/organization/:oid", async (req,res) => {
         res.status(200).send(result);
     } catch (error) {
         console.log(error.message);
-        if (error.message === "oid does not exists") {
+        if (error.message === "organization does not exists") {
             res.status(405).json({
                 message: error.message,
             })

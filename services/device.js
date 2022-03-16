@@ -11,11 +11,9 @@ const Device = require("../models/device.js");
 async function getAllDevices(uid){
     try {
         // get oid
-        console.log(uid)
         const userDocRef = db.collection(databaseConstants.user).doc(uid);
         const userDoc = await userDocRef.get();
         const oid = userDoc.data().oid;
-        console.log(oid)
 
         // get device data and push into an array
         const snapshot = await db.collection(databaseConstants.device).where("oid","==",oid).get();
@@ -112,7 +110,7 @@ async function createDeviceInfo(id,accessKey,hardwareInfo) {
  * @param {*} location 
  * @param {*} tags 
  */
-async function updataDeviceData(did,name,location,tags) {
+async function updataDeviceData(did,name,location,tags,uid) {
     //TODO: check if device belong to user's organization
     try {
         await db.collection(databaseConstants.device).doc(did).update({
