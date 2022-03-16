@@ -36,7 +36,7 @@ const { env } = require('process');
 let options = {
   file: {
     level: 'info',
-    filename: `./logs/gatway.log`,
+    filename: `./logs/gateway.log`,
     handleExceptions: true,
     json: true,
     maxsize: 5242880, // 5MB

@@ -196,6 +196,7 @@ router.delete("/device/:id",checkToken, async (req,res) => {
         // check data validation
         // required field
         const id = req.params.id;
+        const apiKey = req.get(headerConstants.apiKeyHeader)
         if (id === "" || id === undefined || id === null) {
             res.status = 404;
             return res.send("missing deviceId");
