@@ -18,7 +18,7 @@ router.get("/device", checkToken, async (req,res) => {
             return;
         }
         // get devices' data from database
-        const allDevices = await getAllDevices();
+        const allDevices = await getAllDevices(req.body.uid);
         return res.send(allDevices);
     } catch (error) {
         console.log(error);
@@ -32,7 +32,7 @@ router.post("/device/did-new", checkToken, async (req,res) => {
         // required field
         const deviceName = req.body.name;
         if( deviceName === null || deviceName === undefined || deviceName === ""){
-            res.status(403).json({
+            res.status(404).json({
                 message: "missing deviceName"
             })
             return;
@@ -42,6 +42,15 @@ router.post("/device/did-new", checkToken, async (req,res) => {
         if( deviceLocation === null || deviceLocation === undefined || deviceLocation === ""){
             res.status(404).json({
                 message: "missing deviceLocation"
+            })
+            return;
+        }
+
+        const deviceTags = req.body.tags;
+        console.log(deviceTags)
+        if( deviceTags === null || deviceTags === undefined || !Array.isArray(deviceTags)){
+            res.status(404).json({
+                message: "device tags invalid ( must be an array )"
             })
             return;
         }
@@ -103,6 +112,7 @@ router.post("/device",async (req,res) => {
             res.status(403).json({
                 message: "invalid api-x-key"
             })
+            return;
        }
 
        //business logic

@@ -9,13 +9,13 @@ const fs = require('fs');
 const Organization = require("../models/organization")
 const { databaseConstants } = require("../config/constants/database_constants.js");
 
-async function createNewOrg(uid, name, id, imageName) {
+async function createNewOrg(uid, name, id, imageName,hasImage) {
     try {
         const orgDocRef = db.collection(databaseConstants.organization).doc(id);
         const orgDoc = await orgDocRef.get();
     
         // check if not exists
-        if (!orgDoc.exists) {
+        if (orgDoc.exists) {
             // asgin org id to user 
             const userDocRef = db.collection(databaseConstants.user).doc(uid);
             const userDoc = await userDocRef.get();
@@ -28,31 +28,40 @@ async function createNewOrg(uid, name, id, imageName) {
             }else{
                 throw new Error("user has already belong to an org")
             }
-    
-            //generate download Token
-            const downloadToken = nanoid();
-    
-            // metadata
-            const metadata = {
-                metadata: {
-                // This line is very important. It's to create a download token.
-                // We need this so we can manage our own download Token otherwise it will be automatically generated
-                firebaseStorageDownloadTokens: downloadToken
-                },
-                contentType: 'image/png',
-                // cache time
-                cacheControl: 'public, max-age=31536000', 
-            };
-    
-            //upload image
-            await bucket.upload('./upload/'+imageName,{
-                metadata: metadata,
-                destination: id,
-            });
-    
-            // this will be replace later with an atualy image of the org
-            const orgImageUrl = "https://firebasestorage.googleapis.com/v0/b/gdsc-gateway.appspot.com/o/"+id+"?alt=media&token="+downloadToken; 
+
             const orgEndPoint = process.env.SERVER_DOMAIN+"/org/"+id;
+            let orgImageUrl = undefined;
+            if (hasImage) {
+                 //generate download Token
+                const downloadToken = nanoid();
+        
+                // metadata
+                const metadata = {
+                    metadata: {
+                    // This line is very important. It's to create a download token.
+                    // We need this so we can manage our own download Token otherwise it will be automatically generated
+                    firebaseStorageDownloadTokens: downloadToken
+                    },
+                    contentType: 'image/png',
+                    // cache time
+                    cacheControl: 'public, max-age=31536000', 
+                };
+        
+                //upload image
+                await bucket.upload('./upload/'+imageName,{
+                    metadata: metadata,
+                    destination: id,
+                }).catch((error)=>{
+                    console.log(error.message)
+                });
+                // this will be replace later with an atualy image of the org
+                orgImageUrl = "https://firebasestorage.googleapis.com/v0/b/gdsc-gateway.appspot.com/o/"+id+"?alt=media&token="+downloadToken; 
+                
+                // delete image on server
+                fs.unlink('./upload/'+imageName, (error)=>{
+            
+                });
+            }
     
             const organization = new Organization(
                 id,
@@ -68,20 +77,20 @@ async function createNewOrg(uid, name, id, imageName) {
         }else{
             throw new Error("org already exists");
         }
-        // delete image on server
-        fs.unlink('./upload/'+imageName, (error)=>{
-            console.log(error);
-        });
     } catch (error) {
         console.log(error.message);
-        fs.unlink('./upload/'+imageName, (error)=>{
-            console.log(error);
-        });
-        throw new Error(error.message);
+        if (hasImage) {
+            fs.unlink('./upload/'+imageName, (error)=>{   
+                if (error) {
+                    console.log(error)
+                }
+            });
+        }
+        throw new Error(error.message)
     }
 }
 
-async function updateOrg(uid, name, imageName) {
+async function updateOrg(uid, name, imageName,hasImage) {
     try {
         const userDocRef = db.collection(databaseConstants.user).doc(uid);
         const userDoc = await userDocRef.get();
@@ -96,47 +105,58 @@ async function updateOrg(uid, name, imageName) {
         const orgDoc = await orgDocRef.get();
         // check if exists
         if (orgDoc.exists) {
+            let orgImageUrl;
+            if (hasImage) {
+                //generate download Token
+                const downloadToken = nanoid();
 
-            //generate download Token
-            const downloadToken = nanoid();
+                // metadata
+                const metadata = {
+                    metadata: {
+                    // This line is very important. It's to create a download token.
+                    // We need this so we can manage our own download Token otherwise it will be automatically generated
+                    firebaseStorageDownloadTokens: downloadToken
+                    },
+                    contentType: 'image/png',
+                    // cache time
+                    cacheControl: 'public, max-age=31536000', 
+                };
 
-            // metadata
-            const metadata = {
-                metadata: {
-                // This line is very important. It's to create a download token.
-                // We need this so we can manage our own download Token otherwise it will be automatically generated
-                firebaseStorageDownloadTokens: downloadToken
-                },
-                contentType: 'image/png',
-                // cache time
-                cacheControl: 'public, max-age=31536000', 
-            };
+                //upload image
+                await bucket.upload('./upload/'+imageName,{
+                    metadata: metadata,
+                    destination: id,
+                });
 
-            //upload image
-            await bucket.upload('./upload/'+imageName,{
-                metadata: metadata,
-                destination: id,
-            });
+                //new image url
+                orgImageUrl = "https://firebasestorage.googleapis.com/v0/b/gdsc-gateway.appspot.com/o/"+id+"?alt=media&token="+downloadToken;
 
-            //new image url
-            const orgImageUrl = "https://firebasestorage.googleapis.com/v0/b/gdsc-gateway.appspot.com/o/"+id+"?alt=media&token="+downloadToken; 
+                // delete image on server
+                fs.unlink('./upload/'+imageName, (error)=>{
+                    console.log(error);
+                });
 
-            await db.collection(databaseConstants.organization).doc(id).update({
-                name: name,
-                imageUrl: orgImageUrl
-            })
+                await db.collection(databaseConstants.organization).doc(id).update({
+                    name: name,
+                    imageUrl: orgImageUrl
+                })
+            }else{
+                await db.collection(databaseConstants.organization).doc(id).update({
+                    name: name,
+                })
+            }    
         }else{
             throw new Error("org does not exists")
         }
-        // delete image on server
-        fs.unlink('./upload/'+imageName, (error)=>{
-            console.log(error);
-        });
     } catch (error) {
         console.log(error.message);
-        fs.unlink('./upload/'+imageName, (error)=>{
-            console.log(error);
-        });
+        if (hasImage) {
+            fs.unlink('./upload/'+imageName, (error)=>{   
+                if (error) {
+                    console.log(error)
+                }
+            });
+        }
         throw new Error(error.message);
     }
 }
@@ -146,7 +166,7 @@ async function getOrganization(uid) {
         const userDocRef = db.collection(databaseConstants.user).doc(uid);
         const userDoc = await userDocRef.get();
         if (userDoc.exists) {
-            const oid = (await db.collection(databaseConstants.user).doc(uid).get()).data().oid;
+            const oid = userDoc.data().oid;
             let result  = (await db.collection(databaseConstants.organization).doc(oid).get()).data();
 
             return result

@@ -13,9 +13,9 @@ router.use(async (req, res, next) =>{
         if (process.env.NODE_ENV !== "production"){
             if(token === bypassString){
                 req.body.uid = bypassString
+                next();
+                return;
             }
-            next();
-            return;
         }
         //verify token and get uid
         const decodedToken = await getAuth().verifyIdToken(token);
