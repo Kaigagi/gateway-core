@@ -7,16 +7,16 @@ Terraform to provision compute engine on GCP (Use can skip this part if you are 
 We are trying to modularize backend components for you guys, to deploy and change the components if necessary (-_-) but right now it's not
 # Table of Content
 * [For Developer](#for-developer)
-    * [APIs That Ready to use](##apis-that-ready-to-use)
+    * [APIs That Ready to use](#apis-that-ready-to-use)
 * [How to use](#how-to-use)
 # For Developers 
 ## APIs That ready to use
-* [Device APIs](###device-apis)
-* [Data APIs](###data-apis)
-* [Organization APIs](###organization-apis)
+* [Device APIs](#device-apis)
+* [Data APIs](#data-apis)
+* [Organization APIs](#organization-apis)
 
 Currently the prefix or version is **/api/v1**
-### Device APIs
+## Device APIs
 `GET` 
 return an json that contains array of Device that belong to an organzation
 * **URL**: ${prefix}/device
@@ -180,7 +180,7 @@ return an json that contains array of Device that belong to an organzation
      * **Code:** 406 NOT ACCEPTANCE <br />
     **Content:** `{ message : "Invalid JWT Token" }`
 
-### Data APIs
+## Data APIs
 
 `POST` Send device
 * **URL**: ${prefix}/data
@@ -213,7 +213,7 @@ return an json that contains array of Device that belong to an organzation
     OR
     * **Code:** 404 FORBIDDEN <br />
     **Content:** `{ message : "wrong datatype or missing field" }`
-### Organization APIs
+## Organization APIs
 `GET`
 
 * **URL**: ${prefix}/organization
