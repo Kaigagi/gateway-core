@@ -279,7 +279,7 @@ After you clone it, you have to create file **.env** with this folloling value:
 EXPRESS_PORT=3000 // You could change any port you wanted 
 BROKER_PORT=1833
 API_VERSION=v1 //the version of api
-SERVICE_ACCOUNT_PATH=<firebase_your_service_account> // your service accounnt json file
+SERVICE_ACCOUNT_PATH= // your path to your service accounnt json file
 NODE_ENV=  //setup whether your nodejs app is running production mode or not
 ```
     
