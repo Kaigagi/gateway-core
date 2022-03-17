@@ -9,11 +9,18 @@ We are trying to modularize backend components for you guys, to deploy and chang
 * [For Developer](#for-developer)
     * [APIs That Ready to use](#apis-that-ready-to-use)
 * [How to use](#how-to-use)
+* [Manually deploy on a server](#manually-deploy-on-a-server)
+* [If deploy on GCP](#if-deploy-on-gcp)
+    * [Setup let's encrypt for https](#setup-lets-encrypt-for-https)
+    * [Running using Docker](#running-using-docker)
+    * [Using terraform to provision for the Google Cloud](#using-terraform-to-provision-for-the-google-cloud)
+* [Naming Conventions](#naming-conventions)
 # For Developers 
 ## APIs That ready to use
 * [Device APIs](#device-apis)
 * [Data APIs](#data-apis)
 * [Organization APIs](#organization-apis)
+
 
 Currently the prefix or version is **/api/v1**
 ## Device APIs
@@ -259,46 +266,61 @@ return an json that contains array of Device that belong to an organzation
 ### 
 # How to use
 This is the way - Mando
-## First you need to clone this project to your local machine or your server 
+# Manually deploy on a server
+First you need to clone this project to your local machine or your server, and you should have register a firebase project and generate a service account for nodejs 
 
 
 ```git clone https://github.com/GDSC-HSU/gateway-core.git``` 
 
-After you clone it, you have to create file .env with this folloling value: 
+After you clone it, you have to create file **.env** with this folloling value: 
 
 ``` cd gateway-core ``` 
-```
-EXPRESS_PORT=3000
+```javascript
+EXPRESS_PORT=3000 // You could change any port you wanted 
 BROKER_PORT=1833
-API_VERSION=v1
-SERVICE_ACCOUNT_PATH=<firebase_your_service_account>
-NODE_ENV= 
+API_VERSION=v1 //the version of api
+SERVICE_ACCOUNT_PATH=<firebase_your_service_account> // your service accounnt json file
+NODE_ENV=  //setup whether your nodejs app is running production mode or not
 ```
     
 ```npm install ```
 
  ```nodemon app.js ```
 
-## If Deploy on GCP
-Set **NODE_ENV=production**
+# If deploy on GCP
+### Set **NODE_ENV=production**
 
 set credential: applicationDefault() in app.js to use service account that you attach to the compute engine that you create but first make sure you create **firebase service account**
 .If you don't set to production it will find the local service account json file on you local repository read this to setup service account https://firebase.google.com/docs/admin/setup
 
 also if you set it to production will automatic enable https, will search for key and cert for ssl, so if you want to run http only then you shouldn't enable this. I'm sorry we know sometimes getting ssl cert is difficult but you could use let's encrypt to obtain ssl cert (Hopefuly when you trying to setup https for your own server you will learn many cool things)
 
-## Setup let's encrypt for https (Must have domain name)
-## Running using Docker 
+## Setup let's encrypt for https 
+(Must have domain name) (Still WIP)
+You go to this link (https://letsencrypt.org/)
+## Running using Docker
+(still WIP)
+
 ```docker pull <docker-registry-url>:<tag> ```\
 ```docker build .```\
 ```docker run --rm -p 3000:3000 1883:1883 gateway-core:<tag> ```\
 ## Using terraform to provision for the Google Cloud
-``` cd tf```\
-``` terraform init```\
+You don't have to use terraform to provision your VM or compute on GCP, you could clone our source code and manually deploy on your server (or your local machine).
+
+### Terraform
+First you need to has a GCP account which has active the free-trial (300$) or you just straight up using GCP. You navigate to the gateway-core project that you just clone a minute ago and then cd into tf folder and then type the folloing command
+
+``` cd tf```
+
+Terraform init will install all stuff for you, make sure you has terraform installed on your machine (https://learn.hashicorp.com/tutorials/terraform/install-cli) 
+
+``` terraform init```
+
 ``` terraform plan```\
 ``` terraform apply```
 
-## Naming Conventions
+
+# Naming Conventions
 ### Use noun for Resourses
 Example:
 ```js
@@ -348,7 +370,7 @@ function bank_Account() {
 # Api naming convention
 Link: https://restfulapi.net/resource-naming/
 Read this before doing anything please
-# Folder Convention
+# Folder Conventions
 
 ## Folder/File name convention
 
