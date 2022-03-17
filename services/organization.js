@@ -15,7 +15,7 @@ async function createNewOrg(uid, name, id, imageName,hasImage) {
         const orgDoc = await orgDocRef.get();
     
         // check if not exists
-        if (orgDoc.exists) {
+        if (!orgDoc.exists) {
             // asgin org id to user 
             const userDocRef = db.collection(databaseConstants.user).doc(uid);
             const userDoc = await userDocRef.get();
