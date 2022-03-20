@@ -29,7 +29,7 @@ async function createNewOrg(uid, name, id, imageName,hasImage) {
                 throw new Error("user has already belong to an org")
             }
 
-            const orgEndPoint = process.env.SERVER_DOMAIN+"/org/"+id;
+            const orgEndPoint = process.env.ENDPOINT+"/org/"+id;
             let orgImageUrl = undefined;
             if (hasImage) {
                  //generate download Token
