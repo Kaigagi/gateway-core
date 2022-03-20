@@ -126,16 +126,22 @@ router.post("/device",async (req,res) => {
    } catch (error) {
        console.log(error);
        if (error.message === "invalid deviceId") {
-            res.status = 404;
-            return res.send(error.message);
+            res.status(404).json({
+                message: error.message, 
+            })
+            return;
        }
        if (error.message === "wrong accessKey") {
-            res.status = 403;
-            return res.send(error.message);
+            res.status(403).json({
+                message: error.message, 
+            })
+            return;
        }
        if (error.message === "already has hardwareInfo") {
-            res.status = 409;
-            return res.send(error.message);
+            res.status(409).json({
+                message: error.message, 
+            })
+            return;
        }
    }
 })
@@ -197,7 +203,13 @@ router.put("/device",checkToken,(req,res) => {
 
         return res.sendStatus(200);
     } catch (error) {
-        console.log(error);
+        if (error.message === "device does not belong to user") {
+            res.status(405).json({
+                message: error.message, 
+            })
+            return;
+        }
+        return res.sendStatus(500);
     }
 })
 
@@ -221,15 +233,20 @@ router.delete("/device/:id",checkToken, async (req,res) => {
         await deleteDevice(id);
         res.sendStatus(200); 
     }catch(error) {
+        console.log(error);
         if (error.message === "invalid deviceId") {
             res.status(404).json({
                 message: error.message
             })
             return;
-        }else{
-            res.sendStatus(500);
         }
-        console.log(error);
+        if (error.message === "device does not belong to user") {
+            res.status(405).json({
+                message: error.message, 
+            })
+            return;
+        }
+        return res.sendStatus(500); 
     }
 })
 

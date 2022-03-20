@@ -14,8 +14,10 @@ function isAuthorized (req,res,next){
     try{
         const apiKey = req.get(headerConstants.apiKeyHeader)
         const accessKey = req.get(headerConstants.deviceKeyHeader)
-        if(accessKey !== process.env.API_KEY){
-            throw new Error("no API_KEY was found")
+        if(apiKey !== process.env.API_KEY || apiKey === null || apiKey == undefined || apiKey === "" ){
+            res.status(403).json({
+                message: "invalid apiKey"
+            })
         }
 
         // Check API Key
