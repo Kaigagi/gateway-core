@@ -4,6 +4,9 @@ const Data = require("../models/data");
 const db = getFirestore()
 // Maybe move somewhere else
 const SUPPORTED_COVIDIDENTIFICATION = ["QR","RFID"]
+// TODO: The data getting send multiple time (not duplicate but I suppose I going to make a mess)
+// -> Create a function that deal with it
+
 
 /**
  * Send all the sensor information (person's scan) to the server 
@@ -47,7 +50,7 @@ async function postDeviceSensorData(did, bodyTemperature,faceMask, covidIdentifi
 
         // Check the support identification methods, maybe this array will be move into another module
         // and be store as supported identification methods
-        if (SUPPORTED_COVIDIDENTIFICATION.includes(covidIdentification.identificationMethod) == false){
+        if (!SUPPORTED_COVIDIDENTIFICATION.includes(covidIdentification.identificationMethod)){
             throw new Error("wrong value", {cause: "identification_method isn't QR or RFID"})
         }
         // Server timestamp (must be careful of the server location)
@@ -63,7 +66,7 @@ async function postDeviceSensorData(did, bodyTemperature,faceMask, covidIdentifi
 }
 /**
  * Get the sensor data with the timeframe given
- * @param {*} did -  
+ * @param {*} did - 
  * @param {timestamp} startTime -
  * @param {timestamp} endTime - 
  * @returns
@@ -75,7 +78,6 @@ async function getDeviceSensorDataWithTime(did, startTime, endTime){
         }
 
         // Check format of the startTime and EndTime
-
         // Check for Legit start and end timestamp query
         if(startTime > endTime){
                 throw new Error("wrong datatype",{cause: "startTime and endTime is not valid"})
@@ -83,6 +85,7 @@ async function getDeviceSensorDataWithTime(did, startTime, endTime){
 
         const dataRef = await dd.collection(databaseConstants.data)
         const snapshot = await dataRef.where('timestamp', '>=', 'startTime').where('timestamp','<=','endTime').get()
+        // If there were no data just return
         if (snapshot.empty){
                 return;
         }

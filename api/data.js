@@ -8,9 +8,11 @@ router.get("/data", async (req, res) => {
     try{
         let apiKey= req.get(headerConstants.apiKeyHeader)
         if(apiKey === null || apiKey === undefined || apiKey === ""){
-            res.sendStatus(403)
+            res.status(403).json({
+                message: "invalid api-x-key"
+            })
         }
-
+        // Return an array of sensor data
         let result = await getDeviceSensorDataWithTime(
                 req.body.did,
                 req.body.startTime,
@@ -19,7 +21,11 @@ router.get("/data", async (req, res) => {
 
         res.send(result)
     }catch(error){
+
         console.log(error) 
+        res.status(500).json({
+            message: error.message
+        })
     }
 })
 /**
@@ -48,7 +54,7 @@ router.post("/data", async (req, res) => {
             return;
         }
         // Pass logic to the data service, using function postDeviceSensorData
-        let result = await postDeviceSensorData(
+        await postDeviceSensorData(
             req.body.did,
             req.body.bodyTemperature,
             req.body.faceMask,

@@ -95,7 +95,7 @@ router.post("/organization", upload.single("image"),checkToken,async (req,res) =
         }
 
         //business logic
-        const result = await createNewOrg(
+        await createNewOrg(
             req.body.uid,
             orgName,
             orgId,
@@ -151,7 +151,7 @@ router.put("/organization",upload.single("image"),checkToken, async (req,res) =>
         }
 
         //business logic
-        const result = await updateOrg(req.body.uid, orgName, req.body.imageName,hasImage);
+        await updateOrg(req.body.uid, orgName, req.body.imageName,hasImage);
 
         res.status(200).json({
             message: "OK"
