@@ -81,13 +81,6 @@ async function createNewOrg(uid, name, id, imageName,hasImage) {
         }
     } catch (error) {
         console.log(error.message);
-        if (hasImage) {
-            fs.unlink('./upload/'+imageName, (error)=>{   
-                if (error) {
-                    console.log(error)
-                }
-            });
-        }
         throw new Error(error.message)
     }
 }
