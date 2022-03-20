@@ -162,9 +162,7 @@ async function getOrganization(uid) {
         const userDoc = await userDocRef.get();
         if (userDoc.exists) {
             const oid = userDoc.data().oid;
-            let result  = (await db.collection(databaseConstants.organization).doc(oid).get()).data();
-
-            return result
+            return (await db.collection(databaseConstants.organization).doc(oid).get()).data();
         }else{
             throw new Error("user does not belong to any organization")
         }

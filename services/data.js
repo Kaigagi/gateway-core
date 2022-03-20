@@ -4,10 +4,6 @@ const Data = require("../models/data");
 const db = getFirestore()
 // Maybe move somewhere else
 const SUPPORTED_COVIDIDENTIFICATION = ["QR","RFID"]
-// TODO: The data getting send multiple time (not duplicate but I suppose I going to make a mess)
-// -> Create a function that deal with it
-
-
 /**
  * Send all the sensor information (person's scan) to the server 
  * @param {*} did - device id 
