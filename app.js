@@ -97,18 +97,11 @@ const httpServer = http.createServer(app);
 let httpsServer = undefined
 if (process.env.NODE_ENV === "production"){
   const privateKey  = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/privkey.pem', 'utf8');
-  const certificate = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/cert.pem', 'utf8');
   const fullchain = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/fullchain.pem','utf8')
-  const chain  = fs.readFileSync('/etc/letsencrypt/live/gdsc-hsu.xyz/chain.pem','utf8')
   const credentials = {key: privateKey, cert: fullchain};
 
 
   httpsServer = https.createServer(credentials, app);
-  // const httpsBrokerServer = https.createServer(credentials, server)
-
-  // httpsBrokerServer.listen(process.env.BROKER_PORT, function () {
-  //   console.log('Broker started and listening on port',process.env.BROKER_PORT);
-  // })
 
   httpsServer.listen(443, () => {
       console.log('[*] Https Server Gateway listening on port', 443)
