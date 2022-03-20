@@ -59,7 +59,9 @@ async function createNewOrg(uid, name, id, imageName,hasImage) {
                 
                 // delete image on server
                 fs.unlink('./upload/'+imageName, (error)=>{
-            
+                    if (error) {
+                        console.log(error)
+                    }
                 });
             }
     
