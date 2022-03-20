@@ -59,27 +59,35 @@ router.get("/organization",checkToken, async (req,res)=>{
 })
 
 router.post("/organization", upload.single("image"),checkToken,async (req,res) => {
+    //flag if has image
+    let hasImage = true;
+
     try {
-        let hasImage = true;
         // check data validation
         const orgName =  req.body.name;
         if (orgName === "" || typeof orgName !== "string" || orgName === null || orgName === undefined) {
-            res.status = 404;
-            return res.send("missing orgName");
+            res.status(404).json({
+                message: "missing orgName", 
+            })
+            return;
         }
 
 
         const orgId = req.body.id;
         if (orgId === "" || typeof orgId !== "string" || orgId === null || orgId === undefined || orgId.includes("/")|| orgId === "." || orgId.includes(".*")) {
-            res.status = 404;
-            return res.send("missing orgId");
+            res.status(404).json({
+                message: "missing orgId", 
+            })
+            return;
         }
 
         // check Header
         const apiKey = req.get(headerConstants.apiKeyHeader); 
         if (apiKey !== API_KEY) {
-            res.status = 403;
-            return res.send("invalid apiKey");
+            res.status(403).json({
+                message: "invalid apiKey", 
+            })
+            return;
         }
 
         if (req.file === undefined) {

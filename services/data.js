@@ -15,6 +15,14 @@ const SUPPORTED_COVIDIDENTIFICATION = ["QR","RFID"]
  * @return 
  */
 async function postDeviceSensorData(did, bodyTemperature,faceMask, covidIdentification,isComplete){
+        const deviceDocRef = db.collection(databaseConstants.device).doc(did);
+        const deviceDoc = await deviceDocRef.get();
+        //check if device exists
+        if (!deviceDoc.exists) {
+            throw new Error("device does not exist");
+        }
+        const oid = deviceDoc.data().oid;
+
         // Checking all the parameters that are required and check its datatype
 
         if(did === undefined || did === null || did === ""){
@@ -46,7 +54,7 @@ async function postDeviceSensorData(did, bodyTemperature,faceMask, covidIdentifi
         const timestamp = Date.now()
 
         // Map data
-        const deviceSensorData = new Data(did, bodyTemperature,faceMask,covidIdentification,isComplete, timestamp)
+        const deviceSensorData = new Data(did, bodyTemperature,faceMask,covidIdentification,isComplete, timestamp,oid)
         // Write to database (Cloud Firestore)
         // The firestore Node.js client do not support serialization of custom classes. here a way to get through
         // https://stackoverflow.com/questions/52221578/firestore-doesnt-support-javascript-objects-with-custom-prototypes

@@ -46,7 +46,6 @@ router.post("/data", async (req, res) => {
                 message: "invalid api-x-key"
             })
             return;
-
         }
         // Pass logic to the data service, using function postDeviceSensorData
         let result = await postDeviceSensorData(
@@ -54,13 +53,13 @@ router.post("/data", async (req, res) => {
             req.body.bodyTemperature,
             req.body.faceMask,
             req.body.covidIdentification,
-            req.body.isComplete
+            req.body.isComplete,
         )
 
         res.sendStatus(200)
 
     } catch (err) {
-        if (err.message === "wrong datatype" || err.message === "wrong value") {
+        if (err.message === "wrong datatype" || err.message === "wrong value" || err.message === "device does not exist") {
             res.status(404).json({
                 message: err.message,
                 cause: err.cause,

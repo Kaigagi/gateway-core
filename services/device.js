@@ -111,9 +111,20 @@ async function createDeviceInfo(id,accessKey,hardwareInfo) {
  * @param {*} tags 
  */
 async function updataDeviceData(did,name,location,tags,uid) {
-    //TODO: check if device belong to user's organization
     try {
-        await db.collection(databaseConstants.device).doc(did).update({
+        //check if device belong to user
+        const deviceDocRef = db.collection(databaseConstants.device).doc(did);
+        const deviceDoc = await deviceDocRef.get();
+        //get device's oid
+        const deviceOid = deviceDoc.data().oid;
+        //get user's oid
+        const userOid = (await db.collection(databaseConstants.user).doc(uid).get()).data().oid;
+        if (deviceOid !== userOid) {
+            throw new Error("device does not belong to user")
+        }
+
+        //update device data
+        await deviceDocRef.update({
             name: name,
             location: location,
             tags: tags
