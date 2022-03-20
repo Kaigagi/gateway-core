@@ -37,13 +37,13 @@ router.post("/data", async (req, res) => {
         // Check Header first
         if (accessKey === null || accessKey === undefined || accessKey === "") {
             res.status(403).json({
-                message: "access-key invalid"
+                message: "invalid access-key"
             })
             return;
         }
         if(apiKey === null || apiKey === undefined || apiKey === ""){
             res.status(403).json({
-                message: "api-x-key invalid"
+                message: "invalid api-x-key"
             })
             return;
 

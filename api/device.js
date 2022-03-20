@@ -129,7 +129,7 @@ router.post("/device",async (req,res) => {
             res.status = 404;
             return res.send(error.message);
        }
-       if (error.message === "wrong accessKey") {
+       if (error.message === "wrong access-Key") {
             res.status = 403;
             return res.send(error.message);
        }
