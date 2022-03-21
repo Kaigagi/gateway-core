@@ -3,11 +3,13 @@ const express = require("express")
 const { headerConstants } = require("../config/constants/header_constants")
 const { postDeviceSensorData, getDeviceSensorDataWithTime } = require("../services/data")
 const router = express.Router()
+const checkToken = require("../middleware/token_check");
+const API_KEY = process.env.API_KEY;
 // TODO: Add the GET Route when the dashboard needed 
-router.get("/data", async (req, res) => {
+router.get("/data",checkToken, async (req, res) => {
     try{
         let apiKey= req.get(headerConstants.apiKeyHeader)
-        if(apiKey === null || apiKey === undefined || apiKey === ""){
+        if(apiKey === null || apiKey === undefined || apiKey === "" || apiKey === API_KEY){
             res.status(403).json({
                 message: "invalid api-x-key"
             })

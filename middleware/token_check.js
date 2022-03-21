@@ -20,7 +20,7 @@ router.use(async (req, res, next) =>{
         //verify token and get uid
         const decodedToken = await getAuth().verifyIdToken(token);
         //set req.body.uid
-        req.body.uid = decodedToken.uid
+        res.locals.uid = decodedToken.uid
         next();
     } catch (error) {
         console.log(error)

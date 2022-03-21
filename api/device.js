@@ -18,7 +18,7 @@ router.get("/device", checkToken, async (req,res) => {
             return;
         }
         // get devices' data from database
-        const allDevices = await getAllDevices(req.body.uid);
+        const allDevices = await getAllDevices(res.locals.uid);
         return res.send(allDevices);
     } catch (error) {
         console.log(error);
@@ -75,7 +75,7 @@ router.post("/device/did-new", checkToken, async (req,res) => {
             req.body.tags/*tags */
         );
 
-        let result = await createNewDeviceFromWeb(req.body.uid, deviceData); // return the result
+        let result = await createNewDeviceFromWeb(res.locals.uid, deviceData); // return the result
         res.status(200).json(result)
 
     } catch (error) {
@@ -96,11 +96,19 @@ router.post("/device",async (req,res) => {
        // check data validation
        //required field and its datatype
        const id = req.body.id;
+       const hardwareInfo = req.body.hardwareInfo;
        if (id === null || id === undefined || id === "") {
             res.status(404).json({
                 message: "missing deviceId"
             })
             return;
+       }
+
+       if (hardwareInfo === undefined, hardwareInfo === null, hardwareInfo ==="", typeof hardwareInfo !== "object") {
+        res.status(404).json({
+            message: "hardwareInfo invalid ( must be an object )"
+        })
+        return;
        }
 
 
@@ -198,7 +206,8 @@ router.put("/device",checkToken,(req,res) => {
             did, /*device id */
             deviceName, /*device name */
             deviceLocation, /*device location */
-            req.body.tags /*device tags */
+            req.body.tags, /*device tags */
+            res.locals.uid /*user id*/
         );
 
         return res.sendStatus(200);
@@ -230,7 +239,7 @@ router.delete("/device/:id",checkToken, async (req,res) => {
             return res.send("invalid apiKey");
         }
 
-        await deleteDevice(id);
+        await deleteDevice(id,res.locals.uid);
         res.sendStatus(200); 
     }catch(error) {
         console.log(error);

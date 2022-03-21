@@ -138,11 +138,20 @@ async function updataDeviceData(did,name,location,tags,uid) {
  * 
  * @param {*} id 
  */
-async function deleteDevice(id) {
+async function deleteDevice(id,uid) {
     try {
-        const deviceDoc = await db.collection(databaseConstants.device).doc(id);
-        const deviceSnapShot = await deviceDoc.get();
-        if (!deviceSnapShot.exists) {
+        //check if device belong to user
+        const deviceDocRef = db.collection(databaseConstants.device).doc(id);
+        const deviceDoc = await deviceDocRef.get();
+        //get device's oid
+        const deviceOid = deviceDoc.data().oid;
+        //get user's oid
+        const userOid = (await db.collection(databaseConstants.user).doc(uid).get()).data().oid;
+        if (deviceOid !== userOid) {
+            throw new Error("device does not belong to user")
+        }
+
+        if (!deviceDoc.exists) {
             throw new Error("invalid deviceId");
         }else{
             deviceDoc.delete();

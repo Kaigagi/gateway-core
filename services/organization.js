@@ -11,6 +11,7 @@ const { databaseConstants } = require("../config/constants/database_constants.js
 
 async function createNewOrg(uid, name, id, imageName,hasImage) {
     try {
+        console.log(uid,id)
         const orgDocRef = db.collection(databaseConstants.organization).doc(id);
         const orgDoc = await orgDocRef.get();
     
@@ -145,13 +146,6 @@ async function updateOrg(uid, name, imageName,hasImage) {
         }
     } catch (error) {
         console.log(error.message);
-        if (hasImage) {
-            fs.unlink('./upload/'+imageName, (error)=>{   
-                if (error) {
-                    console.log(error)
-                }
-            });
-        }
         throw new Error(error.message);
     }
 }

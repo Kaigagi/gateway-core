@@ -1,6 +1,7 @@
 
 const express = require("express");
 const router = express.Router();
+const fs = require('fs');
 const { nanoid } = require('nanoid');
 const multer = require('multer');
 const storage = multer.diskStorage({
@@ -42,7 +43,7 @@ router.get("/organization",checkToken, async (req,res)=>{
         }
 
         //business logic
-        const result = await getOrganization(req.body.uid);
+        const result = await getOrganization(res.locals.uid);
 
         res.status(200).json(result)
 
@@ -58,7 +59,7 @@ router.get("/organization",checkToken, async (req,res)=>{
     }
 })
 
-router.post("/organization", upload.single("image"),checkToken,async (req,res) => {
+router.post("/organization",checkToken, upload.single("image"),async (req,res) => {
     //flag if has image
     let hasImage = true;
 
@@ -66,28 +67,19 @@ router.post("/organization", upload.single("image"),checkToken,async (req,res) =
         // check data validation
         const orgName =  req.body.name;
         if (orgName === "" || typeof orgName !== "string" || orgName === null || orgName === undefined) {
-            res.status(404).json({
-                message: "missing orgName", 
-            })
-            return;
+            throw new Error("missing orgName")
         }
 
 
         const orgId = req.body.id;
         if (orgId === "" || typeof orgId !== "string" || orgId === null || orgId === undefined || orgId.includes("/")|| orgId === "." || orgId.includes(".*")) {
-            res.status(404).json({
-                message: "missing orgId", 
-            })
-            return;
+            throw new Error("missing orgId")
         }
 
         // check Header
         const apiKey = req.get(headerConstants.apiKeyHeader); 
         if (apiKey !== API_KEY) {
-            res.status(403).json({
-                message: "invalid apiKey", 
-            })
-            return;
+            throw new Error("invalid api-x-key")
         }
 
         if (req.file === undefined) {
@@ -96,7 +88,7 @@ router.post("/organization", upload.single("image"),checkToken,async (req,res) =
 
         //business logic
         await createNewOrg(
-            req.body.uid,
+            res.locals.uid,
             orgName,
             orgId,
             req.body.imageName,
@@ -109,6 +101,25 @@ router.post("/organization", upload.single("image"),checkToken,async (req,res) =
 
     } catch (error) {
         console.log(error);
+        if (hasImage) {
+            fs.unlink('./upload/'+req.body.imageName, (error)=>{   
+                if (error) {
+                    console.log(error)
+                }
+            });
+        }
+        if (error.message === "missing orgName" || error.message === "missing orgId") {
+            res.status(404).json({
+                message: error.message,
+            })
+            return;
+        }
+        if (error.message === "invalid api-x-key") {
+            res.status(403).json({
+                message: error.message,
+            })
+            return;
+        }
         if (error.message === "org already exists" ) {
             res.status(409).json({
                 message: error.message,
@@ -125,25 +136,22 @@ router.post("/organization", upload.single("image"),checkToken,async (req,res) =
     }
 })
 
-router.put("/organization",upload.single("image"),checkToken, async (req,res) => {
+router.put("/organization", checkToken, upload.single("image"), async (req,res) => {
+    //flag if has image
+    let hasImage = true;
+
     try {
-        let hasImage = true;
 
         //check data validation
         const orgName =  req.body.name;
         if (orgName === "" || typeof orgName !== "string" || orgName === null || orgName === undefined) {
-                res.status(404).json({
-                message: "missing orgName"
-            })
+            throw new Error("missing orgName")
         }
 
         // check Header
         const apiKey = req.get(headerConstants.apiKeyHeader); 
         if (apiKey !== API_KEY) {
-
-            res.status(403).json({
-                message: "invalid api-x-key"
-            })
+            throw new Error("invalid api-x-key")
         }
 
         if (req.file === undefined) {
@@ -151,13 +159,32 @@ router.put("/organization",upload.single("image"),checkToken, async (req,res) =>
         }
 
         //business logic
-        await updateOrg(req.body.uid, orgName, req.body.imageName,hasImage);
+        await updateOrg(res.locals.uid, orgName, req.body.imageName,hasImage);
 
         res.status(200).json({
             message: "OK"
         })
     } catch (error) {
         console.log(error);
+        if (hasImage) {
+            fs.unlink('./upload/'+req.body.imageName, (error)=>{   
+                if (error) {
+                    console.log(error)
+                }
+            });
+        }
+        if (error.message === "missing orgName") {
+            res.status(404).json({
+                message: error.message,
+            })
+            return;
+        }
+        if (error.message) {
+            res.status(403).json({
+                message: error.message,
+            })
+            return;
+        }
         if (error.message === "org does not exists" || error.message === "user does not belong to this org") {
             res.status(405).json({
                 message: error.message,
